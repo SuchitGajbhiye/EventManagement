@@ -62,5 +62,11 @@ public class EventController {
 		return "event";
 		
 	}
+	
+	@PostMapping("/registerEvent")
+	public String registerEvent() {
+		
+		return "";
+	}
 
 }
