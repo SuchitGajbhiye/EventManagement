@@ -36,13 +36,13 @@ public class EventController {
 	/* This method is used to register new user */
 	
 	@PostMapping("/registerUser")
-	public String registerUser(@RequestBody RegisterModel userModel) {
+	public String registerUser( ModelMap map,  @RequestBody RegisterModel userModel) {
 		LOG.info("Entering into registering user");	
 		boolean isExistingUser = eventService.isUserExist(userModel);
 		if(!isExistingUser) {
-			eventService.registerUser();
+			eventService.registerUser(userModel);
 		}		
-		return "Success";
+		return "registerUser";
 	}
 	
 	
@@ -56,7 +56,7 @@ public class EventController {
 			eventService.createEvent(model);
 		}		
 			map.put("event", eventService.getEvents());
-		} catch (SQLException e) {			
+		} catch (SQLException e) {  			
 			e.printStackTrace();
 		}		
 		return "event";

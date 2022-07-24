@@ -11,7 +11,7 @@ public interface EventService {
 
 	public boolean isUserExist(RegisterModel userModel);
 
-	public void registerUser();
+	public void registerUser(RegisterModel userModel);
 
 	public void createEvent(EventModel model);
 

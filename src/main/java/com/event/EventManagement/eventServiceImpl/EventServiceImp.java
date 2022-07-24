@@ -90,88 +90,30 @@ public class EventServiceImp implements EventService{
 			stmt.executeUpdate(query);
 			stmt.close();
 			connection.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
 
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public void createTable() throws SQLException {
-		
-		connection = new ConnectionDB().getNewConnection();
-		
-		Statement stmt = connection.createStatement();
-        String sql = "CREATE TABLE COMPANY " +
-           "(ID INT PRIMARY KEY     NOT NULL," +
-           " NAME           TEXT    NOT NULL, " +
-           " AGE            INT     NOT NULL, " +
-           " ADDRESS        CHAR(50), " +
-           " SALARY         REAL)";
-        stmt.executeUpdate(sql);
-        stmt.close();
-        connection.close();
-	}
-	
-	public void insertStatement() throws SQLException
-	{
-		connection = new ConnectionDB().getNewConnection();
-		Statement stmt = connection.createStatement();
-        String sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-           + "VALUES (1, 'Paul', 32, 'California', 20000.00 );";
-        stmt.executeUpdate(sql);
-
-        sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-           + "VALUES (2, 'Allen', 25, 'Texas', 15000.00 );";
-        stmt.executeUpdate(sql);
-
-        sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-           + "VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );";
-        stmt.executeUpdate(sql);
-
-        sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-           + "VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );";
-        stmt.executeUpdate(sql);
-
-        stmt.close();       
-        connection.close();
-	}
-
 	@Override
-	public void registerUser() {
-		// TODO Auto-generated method stub
-		
+	public void registerUser(RegisterModel userModel) {
+		connection = new ConnectionDB().getNewConnection();
+		try {
+			String query = "INSERT INTO USERS(FIRSTNAME,LASTNAME,EMAIL,ORGANISATION,CITY,COUNTRY,PASSWORD,ADDRESS1,ADDRESS2)"
+					+ "VALUES('" + userModel.getFirstName() + "','" + userModel.getLastName() + "','"
+					+ userModel.getEmailId() + "'," + "'" + userModel.getOrganisation() + "','" + userModel.getCity()
+					+ "','" + userModel.getCountry() + "'," + "'" + userModel.getPassword() + "','"
+					+ userModel.getAddress1() + "','" + userModel.getAddress2() + "')";
+
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate(query);
+			stmt.close();
+			connection.close();
+
+		} catch (Exception e) {
+			LOG.info("Exception occures while regitering user:", e.getMessage());
+		}
+
 	}
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-
 }
