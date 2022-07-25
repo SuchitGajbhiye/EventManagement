@@ -49,11 +49,12 @@ public class EventController {
 	}
 
 	@RequestMapping(value = "/createEvent", method=RequestMethod.POST)
-	public String createNewEvent(ModelMap map,EventModel model){
+	public String createNewEvent(ModelMap map,EventModel model,HttpServletRequest request){
 		eventService.createEvent(model);
 		try {
 			map.put("list", eventService.getEvents());
 			map.put("successMessage", "Event Created Successfully");
+			request.getSession().setAttribute("successMessage","Event Created Successfully");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,5 +92,24 @@ public class EventController {
 		RequestDispatcher dispatcher = request.getRequestDispatcher("createEvent.jsp");
 		dispatcher.forward(request, response);
 	}*/
+	@RequestMapping(value = "/edit", method=RequestMethod.GET)
+	public String deleteEvent(ModelMap map,@RequestParam int id){
+		System.out.println("event id to be Edited "+id);
+		// Method to be writen for Edit
+		//retrive the records for this id and pass it in the model using "eventDetails" name
+		map.put("successMessage", "Event Updated Successfully");
+		return "createEvent";
+	}
+	@RequestMapping(value = "/delete", method=RequestMethod.GET)
+	public String delete(ModelMap map,@RequestParam int id){
+		//write a method to delete the event based on ID
+		try {
+			map.put("list", eventService.getEvents());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "eventsList";
+	}
 
 }

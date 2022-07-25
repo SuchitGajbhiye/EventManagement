@@ -27,6 +27,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
+					    <th>Action</th>
 						<th>Event ID</th>
 						<th>Event Name</th>
 						<th>Venue</th>
@@ -38,6 +39,9 @@
 					<c:forEach var="todo" items="${list}">
 
 						<tr>
+						   <td><a href="/edit?id=<c:out value='${todo.eventId}' />">Edit</a>
+								&nbsp;&nbsp;&nbsp;&nbsp; <a
+								href="/delete?id=<c:out value='${todo.eventId}' />">Delete</a></td>
 							<td><c:out value="${todo.eventId}" /></td>
 							<td><c:out value="${todo.eventName}" /></td>
 							<td><c:out value="${todo.eventLocation}" /></td>
@@ -57,7 +61,7 @@
 			</table>
 		</div>
 	</div>
-
+	
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
