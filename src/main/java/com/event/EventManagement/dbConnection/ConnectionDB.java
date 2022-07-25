@@ -5,14 +5,14 @@ import java.sql.DriverManager;
 
 import org.springframework.stereotype.Service;
 
-//@Service("connectionDb")
+@Service("connectionDb")
 public class ConnectionDB {
 	
 	public ConnectionDB() {
 		
 	}
 	
-	public Connection getPostgresConnection() {
+	/*public Connection getPostgresConnection() {
 		Connection connection = null;
 	      try {
 	         Class.forName("org.postgresql.Driver");
@@ -26,7 +26,7 @@ public class ConnectionDB {
 	      }
 	      System.out.println("Opened database successfully");
 	      return connection;
-	}
+	}*/
 	
 	public Connection getNewConnection() {
 		Connection connection = null;

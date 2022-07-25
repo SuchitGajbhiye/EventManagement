@@ -8,7 +8,7 @@ public class EventModel {
 	private String noOfStudents;
 	private String createdBy;
 	private String updatedBy;
-	private String description;
+	private String eventDescription;
 	
 	public Integer getEventId() {
 		return eventId;
@@ -52,19 +52,21 @@ public class EventModel {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	
-	public String getDescription() {
-		return description;
+	public String getEventdescription() {
+		return eventDescription;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setEventdescription(String eventdescription) {
+		eventDescription = eventdescription;
 	}
 	@Override
 	public String toString() {
 		return "EventModel [eventId=" + eventId + ", eventName=" + eventName + ", eventDate=" + eventDate
 				+ ", eventLocation=" + eventLocation + ", noOfStudents=" + noOfStudents + ", createdBy=" + createdBy
-				+ ", updatedBy=" + updatedBy + ", description=" + description + "]";
+				+ ", updatedBy=" + updatedBy + ", Eventdescription=" + eventDescription + "]";
 	}
+	
+	
+	
 	
 
 }

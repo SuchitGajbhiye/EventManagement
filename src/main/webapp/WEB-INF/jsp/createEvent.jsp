@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%-- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 <title>User Management Application</title>
@@ -15,10 +15,20 @@
 </head>
 <body>
 <jsp:include page="menu.jsp"></jsp:include>
-	<div class="container col-md-5">
+<script type="text/javascript">
+var name = request.getSession().getAttribute("username");
+alert(name);
+if(name!=null){
+	var session = true;
+}else{
+	var session=false;
+}
+</script>
+	<div class="container col-md-5" style="padding-top: 15px;">
 		<div class="card">
 			<div class="card-body">
-			<form method="post">
+			<h2>Create Event Form</h2>
+			<form method="post" action="createEvent">
 				<fieldset class="form-group">
 					<label>Event Name</label> 
 					<input type="text" name="eventName" required="required" class="form-control">
@@ -26,7 +36,7 @@
 
 				<fieldset class="form-group">
 					<label>Event Venue</label> <input type="text"
-						class="form-control" required="required" name="Eventdescription">
+						class="form-control" required="required" name="eventLocation">
 				</fieldset>
 
 				<!-- <fieldset class="form-group">
@@ -41,15 +51,21 @@
 					<label>Event Date</label> <input type="date" class="form-control"
 						name="eventDate" required="required">
 				</fieldset>
-				
+				<fieldset class="form-group">
+					<label>No of Max Students allowed</label> <input type="text" pattern="\d*" maxlength="3" class="form-control"
+						name="noOfStudents" required="required">
+				</fieldset>
+				<div class="alert alert-success center" role="alert">
 				<button  type="submit" class="btn btn-primary">Submit</button>
+				<p>${successMessage}</p>
+				</div>
+				
 				<%-- <a href="<%=request.getContextPath()%>/createNewEvent"
 					class="btn btn-success">Save</a> --%>
 				</form>
 			</div>
 		</div>
 	</div>
-
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>

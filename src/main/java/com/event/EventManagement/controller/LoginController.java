@@ -11,19 +11,29 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.Session;
+import javax.servlet.http.HttpSession;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.event.EventManagement.model.EventModel;
+import com.event.EventManagement.service.EventService;
+
+
 @Controller
 @WebServlet("/")
 public class LoginController extends HttpServlet {
 
-	
+	@Autowired
+	EventService eventService;
 	/*private static final long serialVersionUID = 1L;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -53,56 +63,30 @@ public class LoginController extends HttpServlet {
 		return "login";
 		
 	}
+	@RequestMapping(value = "/logout", method=RequestMethod.GET)
+	public String logout(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "login";
+		
+	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password){
+	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,HttpServletRequest request){
 		if(username.equals("Siddhesh") && password.equals("Siddhesh")){
 			map.put("username", username);
-			/*List<String> list = new ArrayList<>();
-			list.add("Hello");
-			list.add("watch");
-			map.put("list", list);*/							
+			try {
+				map.put("list", eventService.getEvents());
+				HttpSession session = request.getSession();
+				session.setAttribute("user", username);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}										
 			return "eventsList";
 		}			
 		map.put("errorMessage", "Please use correct credentials");
 		return "login";
 	}
-	@RequestMapping(value = "/new", method=RequestMethod.POST)
-	public String createNewEvent(ModelMap map,@RequestParam String eventName, @RequestParam String Eventdescription,@RequestParam String eventDate){
-		List<String> list = new ArrayList<>();
-		list.add(eventName);
-		map.put("list", list);
-		return "eventsList";
-	}
-	@RequestMapping(value = "/new", method=RequestMethod.GET)
-	public String showNewForm(ModelMap map){
-		/*List<String> list = new ArrayList<>();
-		list.add("Hello");
-		list.add("watch");
-		map.put("list", list);*/
-		return "createEvent";
-	}
-	@RequestMapping(value = "/searchEvent", method=RequestMethod.GET)
-	public String searchEvent(ModelMap map){
-		/*List<String> list = new ArrayList<>();
-		list.add("Hello");
-		list.add("watch");
-		map.put("list", list);*/
-		return "searchEvent";
-	}
-	@RequestMapping(value = "/pendingApprovals", method=RequestMethod.GET)
-	public String pendingApproval(ModelMap map){
-		/*List<String> list = new ArrayList<>();
-		list.add("Hello");
-		list.add("watch");
-		map.put("list", list);*/
-		return "pendingApprovals";
-	}
-	/*@RequestMapping(value = "/new", method=RequestMethod.POST)
-	private void showNewForm(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("createEvent.jsp");
-		dispatcher.forward(request, response);
-	}*/
 }
 
