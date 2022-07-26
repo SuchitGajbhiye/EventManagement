@@ -72,18 +72,27 @@ public class LoginController extends HttpServlet {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,HttpServletRequest request){
+	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request){
+		
+		// check is username exixts and matches with Role
+		
 		if(username.equals("Siddhesh") && password.equals("Siddhesh")){
 			map.put("username", username);
 			try {
 				map.put("list", eventService.getEvents());
 				HttpSession session = request.getSession();
 				session.setAttribute("user", username);
+				session.setAttribute("role", role);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}										
-			return "eventsList";
+			}
+			if(role.equals("admin")){
+				return "eventsList";
+			}else{
+				return "eventsListUser";
+			}
+			
 		}			
 		map.put("errorMessage", "Please use correct credentials");
 		return "login";

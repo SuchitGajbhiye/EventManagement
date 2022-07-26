@@ -18,7 +18,9 @@
 	request.getSession().setAttribute("username", request.getParameter  ("username"));
 	 %>
 	</script>
-	<div class="col-md-6 col-md-offset-3" style="overflow: auto">
+	<div class="container col-md-5" style="overflow: auto;padding-top: 15px;">
+	<div class="card">
+			<div class="card-body">
 		<h1 style="text-align: left;font-size: 20px;">Login Form</h1>
 		<%-- <form action="<%=request.getContextPath()%>/login" method="post"> --%>
 		<form method="post" action="login">
@@ -33,6 +35,11 @@
 					class="form-control" id="password" placeholder="Password"
 					name="password" required>
 			</div>
+			<input type="radio" name="role" value="admin"/>Admin
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" name="role" value="student"/>Student
+			</br>
+			</br>
 
 		<div>
 		<button type="submit" class="btn btn-primary">Submit</button>
@@ -40,6 +47,8 @@
 		</div>
 			
 		</form>
+	</div>
+	</div>
 	</div>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 	<script type="text/javascript">

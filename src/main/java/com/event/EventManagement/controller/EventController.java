@@ -35,6 +35,7 @@ public class EventController {
 	@RequestMapping(value = "/eventsSummary", method=RequestMethod.GET)
 	public String getAllEvents(ModelMap map,HttpServletRequest request){
 		String value  = (String) request.getSession().getAttribute("user");
+		String role  = (String) request.getSession().getAttribute("role");
 		if(value!=null){
 		try {
 			map.put("list", eventService.getEvents());
@@ -42,7 +43,12 @@ public class EventController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(role.equals("admin")){
 			return "eventsList";
+		}else{
+			return "eventsListUser";
+		}
+			
 		}else{
 			return "login";
 		}
@@ -93,7 +99,7 @@ public class EventController {
 		dispatcher.forward(request, response);
 	}*/
 	@RequestMapping(value = "/edit", method=RequestMethod.GET)
-	public String deleteEvent(ModelMap map,@RequestParam int id){
+	public String updateEvent(ModelMap map,@RequestParam int id){
 		System.out.println("event id to be Edited "+id);
 		// Method to be writen for Edit
 		//retrive the records for this id and pass it in the model using "eventDetails" name
@@ -110,6 +116,17 @@ public class EventController {
 			e.printStackTrace();
 		}
 		return "eventsList";
+	}
+	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
+	public String registerForEvent(ModelMap map,@RequestParam int eventId){
+		map.put("successMessage", "You are successfully registered for event");
+		try {
+			map.put("list", eventService.getEvents());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "eventsListUser";
 	}
 
 }
