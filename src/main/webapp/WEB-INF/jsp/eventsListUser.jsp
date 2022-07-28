@@ -39,6 +39,27 @@
 		<!-- <img src="/jsp/eventPlanning.jpg" alt="View" style="width:304px;height:228px;"> -->
 		<!--  <img src="eventPlanning.jpg" class="img-fluid" border=0 width="100px" height="100px"> -->
 			<h3 class="text-center">List of Events</h3><td>${successMessage}</td>
+			
+			<table class="table table-striped">
+			<thead>
+			<tr>
+				<label for="searchOptions">Choose a Search Criteria:</label>
+				<th><fieldset class="form-group">
+				<select name="searchOptions" id="searchOptions">
+				    <option value="eventId">Event ID</option>
+				  <option value="eventName">Event Name</option>
+				  <option value="eventLocation">Event Venue</option>
+				</select>
+				</fieldset></th>
+				<th><fieldset class="form-group">
+			<input type="text"  id="searchText" name="searchText" placeholder="Search with text" required="required" width="20%">
+			</fieldset></th>
+			<th><fieldset class="form-group">
+			<button  type="submit" onclick="searchEvents()"   onclass="btn btn-primary">Search</button>
+			</fieldset></th>
+			</tr>
+			</thead>
+			</table>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -122,6 +143,20 @@
 		  document.getElementById("deletemodalAttach").style.display = "none";
 		  
 		}
+	function searchEvents() {
+		  var searchText = document.getElementById("searchText").value
+		  var searchParameter = document.getElementById("searchOptions").value
+		  window.alert(searchText);
+		  window.alert(searchParameter);
+		  window.location="searchEvents?searchText="+searchText+"&searchParameter="+searchParameter;
+		  <%-- if (confirm("Are you sure you want to register for this event ?")) {
+		    window.alert("<%=request.getSession().getAttribute("user")%>")
+		    window.location="registerForEvent?eventId="+eventId;
+		  } else {
+			  alert("cancelled")
+		  } --%>
+		}
+	
 	</script>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>

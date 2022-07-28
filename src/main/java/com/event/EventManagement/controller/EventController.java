@@ -128,5 +128,21 @@ public class EventController {
 		}
 		return "eventsListUser";
 	}
+	@RequestMapping(value = "/searchEventsPage", method=RequestMethod.GET)
+	public String searchEventsPage(ModelMap map){
+
+		return "searchEvents";
+	}
+	@RequestMapping(value = "/searchEvents", method=RequestMethod.GET)
+	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText){
+		try {
+			map.put("list", eventService.getEvents());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "eventsListUser";
+	}
+	
 
 }
