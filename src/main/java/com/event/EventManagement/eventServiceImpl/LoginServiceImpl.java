@@ -18,16 +18,17 @@ public class LoginServiceImpl implements LoginService{
 
 	@Override
 	public String authorizeUser(String username, String password) {
-		String query = "SELECT COUNT(*) AS USERCOUNT FROM USERS WHERE EMAIL='"+username+"' AND PASSWORD = '"+password+"'";
+		String query = "SELECT COUNT(*) AS USERCOUNT FROM EVENTUSERS WHERE EMAILID='"+username+"' AND PASSWORD = '"+password+"'";
 		String count = null;
 		try {
 			connection = new ConnectionDB().getNewConnection();
 			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
 			 count = rs.getString("USERCOUNT");			
 		
 		}catch(Exception e) {
-			LOG.info("Exception occures while authoriz user:");
+			LOG.info("Exception occures while authoriz user:",e.getMessage());
 		}
 		return count;
 		

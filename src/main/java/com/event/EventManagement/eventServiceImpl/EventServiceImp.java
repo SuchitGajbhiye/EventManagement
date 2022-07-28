@@ -126,4 +126,64 @@ public class EventServiceImp implements EventService{
 		}
 
 	}
+
+	@Override
+	public EventModel getEventBasedOnId(int id) {
+		connection = new ConnectionDB().getNewConnection();
+		String query = "SELECT * FROM EVENTS WHERE EVENTID = '"+id+"'";
+		Statement stmt = null;
+		EventModel model = new EventModel();
+		try {
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {				
+				model.setEventDate(rs.getString(query));
+				model.setEventLocation(query);
+				model.setEventName(query);
+				model.setNoOfStudents(query);
+				model.setEventdescription(query);				
+			}
+			stmt.close();
+			connection.close();
+		}catch (Exception e) {
+			LOG.info("Exception occred while retriving event in EventServiceImpl",e.getMessage());
+		}		
+		
+		return model;
+	}
+
+	@Override
+	public void deleteEvent(int id) {
+		connection = new ConnectionDB().getNewConnection();
+		String query = "DELETE * FROM EVENTS WHERE EVENTID = '"+id+"'";
+		Statement stmt = null;
+		try {
+			stmt = connection.createStatement();
+			 stmt.executeUpdate(query);			
+			stmt.close();
+			connection.close();
+		
+	}catch(Exception e) {
+		LOG.info("Exception occred while deleting event in EventServiceImpl");
+	}
+		}
+
+	@Override
+	public EventModel searchEvents(String searchParameter, String searchText) {
+		try {
+			switch (searchParameter) {
+			case "":
+				
+				break;
+
+			default:
+				break;
+			}
+			
+		}catch(Exception e) {
+			LOG.info("Exception occred while search event in EventServiceImpl",e.getMessage());
+		}
+		return null;
+	}
+	
 }

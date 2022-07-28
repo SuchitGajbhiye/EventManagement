@@ -100,9 +100,9 @@ public class EventController {
 	}*/
 	@RequestMapping(value = "/edit", method=RequestMethod.GET)
 	public String updateEvent(ModelMap map,@RequestParam int id){
-		System.out.println("event id to be Edited "+id);
-		// Method to be writen for Edit
-		//retrive the records for this id and pass it in the model using "eventDetails" name
+		LOG.info("event id to be Edited "+id);
+		EventModel model = eventService.getEventBasedOnId(id);
+		map.put("eventDetails", model);//retrive the records for this id and pass it in the model using "eventDetails" name		
 		map.put("successMessage", "Event Updated Successfully");
 		return "createEvent";
 	}
@@ -110,9 +110,10 @@ public class EventController {
 	public String delete(ModelMap map,@RequestParam int id){
 		//write a method to delete the event based on ID
 		try {
-			map.put("list", eventService.getEvents());
+			eventService.deleteEvent(id);
+			map.put("list", eventService.getEvents());			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			LOG.info("Exception occures while edit events in EventController:",e.getMessage());
 			e.printStackTrace();
 		}
 		return "eventsList";
@@ -133,13 +134,14 @@ public class EventController {
 
 		return "searchEvents";
 	}
+	
 	@RequestMapping(value = "/searchEvents", method=RequestMethod.GET)
 	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText){
 		try {
+			EventModel model = eventService.searchEvents(searchParameter,searchText);
 			map.put("list", eventService.getEvents());
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.info("Exception occred while search event on EventController:",e.getMessage());			
 		}
 		return "eventsListUser";
 	}

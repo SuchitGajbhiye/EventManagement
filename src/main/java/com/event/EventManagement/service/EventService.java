@@ -15,4 +15,10 @@ public interface EventService {
 
 	public void createEvent(EventModel model);
 
+	public EventModel getEventBasedOnId(int id);
+
+	public void deleteEvent(int id);
+
+	public EventModel searchEvents(String searchParameter, String searchText);
+
 }
