@@ -19,6 +19,6 @@ public interface EventService {
 
 	public void deleteEvent(int id);
 
-	public EventModel searchEvents(String searchParameter, String searchText);
+	public List<EventModel> searchEvents(String searchParameter, String searchText);
 
 }

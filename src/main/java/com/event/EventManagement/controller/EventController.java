@@ -1,6 +1,7 @@
 package com.event.EventManagement.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -118,6 +119,7 @@ public class EventController {
 		}
 		return "eventsList";
 	}
+	
 	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
 	public String registerForEvent(ModelMap map,@RequestParam int eventId){
 		map.put("successMessage", "You are successfully registered for event");
@@ -138,7 +140,7 @@ public class EventController {
 	@RequestMapping(value = "/searchEvents", method=RequestMethod.GET)
 	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText){
 		try {
-			EventModel model = eventService.searchEvents(searchParameter,searchText);
+			List<EventModel> model = eventService.searchEvents(searchParameter,searchText);
 			map.put("list", eventService.getEvents());
 		} catch (SQLException e) {
 			LOG.info("Exception occred while search event on EventController:",e.getMessage());			

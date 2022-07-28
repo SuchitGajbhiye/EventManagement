@@ -43,6 +43,7 @@ public class EventServiceImp implements EventService{
 				event.setNoOfStudents(rs.getString("NUMBER_OF_STUDENTS"));	
 				eventList.add(event);				  
 	         }
+			stmt.close();
 			connection.close();
 		} catch (SQLException e) {			
 			e.printStackTrace();
@@ -169,21 +170,43 @@ public class EventServiceImp implements EventService{
 		}
 
 	@Override
-	public EventModel searchEvents(String searchParameter, String searchText) {
+	public List<EventModel> searchEvents(String searchParameter, String searchText) {
+		String query = null;
+		List<EventModel> eventList = new ArrayList<>();
+		connection = new ConnectionDB().getNewConnection();
 		try {
 			switch (searchParameter) {
-			case "":
-				
+			case "Event ID":
+				query = "SELECT * FROM EVENTS WHERE EVENTID = '"+searchText+"'";
 				break;
-
+			case "Event Name":
+				query = "SELECT * FROM EVENTS WHERE EVENTname = '"+searchText+"'";
+				break;
+			case "Event Venue":
+				query = "SELECT * FROM EVENTS WHERE EVENTname = '"+searchText+"'";
 			default:
 				break;
 			}
+			Statement stmt = null;
+						
+				stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query);
+				while(rs.next()){
+					EventModel event = new EventModel();
+					event.setEventId(rs.getInt("eventid"));
+					event.setEventName(rs.getString("eventName"));
+					event.setEventLocation(rs.getString("eventLocation"));		
+					event.setEventDate(rs.getString("eventDate"));	
+					event.setNoOfStudents(rs.getString("NUMBER_OF_STUDENTS"));	
+					eventList.add(event);				  
+		         }
+				stmt.close();
+				connection.close();			
 			
 		}catch(Exception e) {
 			LOG.info("Exception occred while search event in EventServiceImpl",e.getMessage());
 		}
-		return null;
+		return eventList;
 	}
 	
 }

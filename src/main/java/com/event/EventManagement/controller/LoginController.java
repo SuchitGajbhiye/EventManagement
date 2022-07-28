@@ -68,7 +68,6 @@ public class LoginController extends HttpServlet {
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
 	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request){
 		
-		// check is username exixts and matches with Role
 		String count = loginService.authorizeUser(username, password);
 		
 		if(!count.equals(null) && !count.equals("0")){
