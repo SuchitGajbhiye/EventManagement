@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 import javax.servlet.http.HttpSession;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,16 +25,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.event.EventManagement.eventServiceImpl.LoginServiceImpl;
 import com.event.EventManagement.model.EventModel;
 import com.event.EventManagement.service.EventService;
+import com.event.EventManagement.service.LoginService;
 
 
 @Controller
 @WebServlet("/")
 public class LoginController extends HttpServlet {
+	private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
 	@Autowired
 	EventService eventService;
+	
+	@Autowired
+	LoginService loginService;
 	/*private static final long serialVersionUID = 1L;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -75,8 +82,9 @@ public class LoginController extends HttpServlet {
 	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request){
 		
 		// check is username exixts and matches with Role
+		String count = loginService.authorizeUser(username, password);
 		
-		if(username.equals("Siddhesh") && password.equals("Siddhesh")){
+		if(!count.equals(null) && !count.equals("0")){
 			map.put("username", username);
 			try {
 				map.put("list", eventService.getEvents());
@@ -84,7 +92,7 @@ public class LoginController extends HttpServlet {
 				session.setAttribute("user", username);
 				session.setAttribute("role", role);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				LOG.info("Exception occured while authorizing user in LoginController :",e.getMessage());
 				e.printStackTrace();
 			}
 			if(role.equals("admin")){
