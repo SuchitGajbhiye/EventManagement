@@ -38,12 +38,13 @@
 		<div class="container">
 		<!-- <img src="/jsp/eventPlanning.jpg" alt="View" style="width:304px;height:228px;"> -->
 		<!--  <img src="eventPlanning.jpg" class="img-fluid" border=0 width="100px" height="100px"> -->
-			<h3 class="text-center">List of Events</h3><td>${successMessage}</td>
+			<h3 class="text-center">List of Events</h3>
 			
 			<table class="table table-striped">
 			<thead>
 			<tr>
 				<label for="searchOptions">Choose a Search Criteria:</label>
+				<h3 style="font-size: 15px;font-weight: bold;color: green;text-align: right">${successMessage}</h3>
 				<th><fieldset class="form-group">
 				<select name="searchOptions" id="searchOptions">
 				    <option value="eventId">Event ID</option>
@@ -117,26 +118,13 @@
 	</div>
 	
 	<script type="text/javascript">
+	var eventIdGlobal;
 	function register(eventId) {
-		  var txt;
-		  //alert(document.getElementById("deletemodalAttach"));
+		eventIdGlobal = eventId;
 		  document.getElementById("deletemodalAttach").style.display = "block";
-		  <%-- if (confirm("Are you sure you want to register for this event ?")) {
-		    window.alert("<%=request.getSession().getAttribute("user")%>")
-		    window.location="registerForEvent?eventId="+eventId;
-		  } else {
-			  alert("cancelled")
-		  } --%>
 		}
-	function registerForEvent(eventId) {
-		  var txt;
-		  window.location="registerForEvent?eventId="+eventId;
-		  <%-- if (confirm("Are you sure you want to register for this event ?")) {
-		    window.alert("<%=request.getSession().getAttribute("user")%>")
-		    window.location="registerForEvent?eventId="+eventId;
-		  } else {
-			  alert("cancelled")
-		  } --%>
+	function registerForEvent() {
+		  window.location="registerForEvent?eventId="+eventIdGlobal;
 		}
 	function closePopup() {
 		  var txt;
@@ -146,17 +134,8 @@
 	function searchEvents() {
 		  var searchText = document.getElementById("searchText").value
 		  var searchParameter = document.getElementById("searchOptions").value
-		  window.alert(searchText);
-		  window.alert(searchParameter);
 		  window.location="searchEvents?searchText="+searchText+"&searchParameter="+searchParameter;
-		  <%-- if (confirm("Are you sure you want to register for this event ?")) {
-		    window.alert("<%=request.getSession().getAttribute("user")%>")
-		    window.location="registerForEvent?eventId="+eventId;
-		  } else {
-			  alert("cancelled")
-		  } --%>
 		}
-	
 	</script>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
