@@ -121,7 +121,7 @@ public class EventController {
 	}
 	
 	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
-	public String registerForEvent(ModelMap map,@RequestParam int eventId){
+	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents){
 		map.put("successMessage", "You are successfully registered for event");
 		try {
 			map.put("list", eventService.getEvents());
@@ -138,7 +138,7 @@ public class EventController {
 	}
 	
 	@RequestMapping(value = "/searchEvents", method=RequestMethod.GET)
-	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText){
+	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText ){
 		try {
 			List<EventModel> model = eventService.searchEvents(searchParameter,searchText);
 			map.put("list", eventService.getEvents());
