@@ -56,7 +56,7 @@ public class EventServiceImp implements EventService{
 	@Override
 	public boolean isUserExist(RegisterModel userModel) {
 		String email = null;
-		String query = "select emailId from users where emailId = '"+userModel.getEmailId()+"'";
+		String query = "select emailId from eventusers where emailId = '"+userModel.getEmailId()+"'";
 		Statement stmt;
 		boolean userExist = false;
 		
@@ -65,7 +65,9 @@ public class EventServiceImp implements EventService{
 			
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			 email = rs.getString("emailId");
+			while(rs.next()) {
+				 email = rs.getString("emailId");
+			}			
 			
 			if(email==null || email.isEmpty()) {
 				userExist = false;
@@ -111,11 +113,11 @@ public class EventServiceImp implements EventService{
 	public void registerUser(RegisterModel userModel) {
 		connection = new ConnectionDB().getNewConnection();
 		try {
-			String query = "INSERT INTO USERS(FIRSTNAME,LASTNAME,EMAIL,ORGANISATION,CITY,COUNTRY,PASSWORD,ADDRESS1,ADDRESS2)"
+			String query = "INSERT INTO EVENTUSERS(FIRSTNAME,LASTNAME,EMAILID,COMPANY,CITY,COUNTRY,PASSWORD,ADDRESS1,ADDRESS2,ROLE)"
 					+ "VALUES('" + userModel.getFirstName() + "','" + userModel.getLastName() + "','"
 					+ userModel.getEmailId() + "'," + "'" + userModel.getOrganisation() + "','" + userModel.getCity()
 					+ "','" + userModel.getCountry() + "'," + "'" + userModel.getPassword() + "','"
-					+ userModel.getAddress1() + "','" + userModel.getAddress2() + "')";
+					+ userModel.getAddress1() + "','" + userModel.getAddress2() + "','student')";
 
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate(query);
@@ -123,7 +125,8 @@ public class EventServiceImp implements EventService{
 			connection.close();
 
 		} catch (Exception e) {
-			LOG.info("Exception occures while regitering user:", e.getMessage());
+			LOG.info("Exception occures while registering user:", e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
@@ -176,13 +179,13 @@ public class EventServiceImp implements EventService{
 		connection = new ConnectionDB().getNewConnection();
 		try {
 			switch (searchParameter) {
-			case "Event ID":
+			case "eventId":
 				query = "SELECT * FROM EVENTS WHERE EVENTID = '"+searchText+"'";
 				break;
-			case "Event Name":
+			case "eventName":
 				query = "SELECT * FROM EVENTS WHERE EVENTname = '"+searchText+"'";
 				break;
-			case "Event Venue":
+			case "eventLocation":
 				query = "SELECT * FROM EVENTS WHERE EVENTname = '"+searchText+"'";
 			default:
 				break;

@@ -101,7 +101,13 @@ public class LoginController extends HttpServlet {
 	}
 	@RequestMapping(value = "/register", method=RequestMethod.POST)
 	public String register(ModelMap map,RegisterModel model){
-		map.put("returnMessage", "User Registration successful");
+		boolean userExist = eventService.isUserExist(model);
+		if(!userExist) {
+			eventService.registerUser(model);
+			map.put("returnMessage", "User Registration successful");
+		}else {
+			map.put("errorMessage", "U");
+		}		
 		return "register";
 		
 	}

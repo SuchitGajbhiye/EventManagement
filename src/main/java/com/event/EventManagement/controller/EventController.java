@@ -141,8 +141,12 @@ public class EventController {
 	public String searchEvents(ModelMap map,@RequestParam String searchParameter, @RequestParam String searchText ){
 		try {
 			List<EventModel> model = eventService.searchEvents(searchParameter,searchText);
-			map.put("list", eventService.getEvents());
-		} catch (SQLException e) {
+			if(model.isEmpty())
+				map.put("error", "No records found");
+			else {
+				map.put("list", model);
+			}
+		} catch (Exception e) {
 			LOG.info("Exception occred while search event on EventController:",e.getMessage());			
 		}
 		return "eventsListUser";
