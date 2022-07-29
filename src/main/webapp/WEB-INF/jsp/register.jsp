@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <title>Event Management</title>
 
 <link rel="stylesheet"
@@ -16,41 +16,51 @@
 <body>
 	<%-- <jsp:include page="../common/header.jsp"></jsp:include> --%>
 	<jsp:include page="menu.jsp"></jsp:include>
-	<div class="container">
+	<div class="container col-md-5" style="padding-top: 15px;">
+		<div class="card">
+			<div class="card-body">
 
 	<h2>User Register Form</h2>
-	<div class="col-md-6 col-md-offset-3">
 			
 				<form action="<%=request.getContextPath()%>/register" method="post">
 
 					<div class="form-group">
 						<label for="uname">First Name:</label> <input type="text"
-							class="form-control" id="uname" placeholder="First Name"
+							class="form-control" id="firstName" placeholder="First Name"
 							name="firstName" required>
 					</div>
 
 					<div class="form-group">
 						<label for="uname">Last Name:</label> <input type="text"
-							class="form-control" id="uname" placeholder="last Name"
+							class="form-control" id="lastName" placeholder="last Name"
 							name="lastName" required>
 					</div>
 
 					<div class="form-group">
-						<label for="uname">User Name:</label> <input type="text"
-							class="form-control" id="username" placeholder="User Name"
-							name="username" required>
+						<label for="uname">Email ID:</label> <input type="email"
+							class="form-control" id="emailId" placeholder="Email ID"
+							name="emailId" required>
 					</div>
-
+					<div class="form-group">
+						<label for="uname">Organization:</label> <input type="text"
+							class="form-control" id="organisation" placeholder="Name of College OR Institute"
+							name="organisation" required>
+					</div>
 					<div class="form-group">
 						<label for="uname">Password:</label> <input type="password"
 							class="form-control" id="password" placeholder="Password"
 							name="password" required>
 					</div>
 
+					<div>
 					<button type="submit" class="btn btn-primary">Submit</button>
+					
+					<span style="color: green">${returnMessage}</span>
+					</div>
 
 				</form>
 			</div>
+		</div>
 		</div>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
