@@ -225,8 +225,23 @@ public class EventServiceImp implements EventService{
 
 	@Override
 	public void registerEvents(int eventId, String noOfStudents, String userEmail) {
+		String eventName = null;
+		Statement stmt = null;
+		String eventNameQuery = "SELECT EVENTNAME FROM EVENTS WHERE EVENTID = '"+eventId+"'";
 		try {
 			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(eventNameQuery);
+			while(rs.next())
+				eventName = rs.getString("EVENTNAME");
+			
+		
+		String query = "INSERT INTO EVENT_REG_SUMMARY(EVENTID,EVENTNAME,REGISTER_BY,REGISTER_ON,NO_OF_STUDENTS,APPROVAL_STATUS)"
+				+ "VALUES('"+eventId+"','"+eventName+"','"+userEmail+"',SYSDATE,'"+noOfStudents+"','PENDING')";
+		stmt.executeUpdate(query);
+		stmt.close();
+		connection.close();
+		
 		}catch(Exception e) {
 			LOG.info("Exception occures while egisterEvent in EvetServiceImpl:"+e.getMessage());
 			e.printStackTrace();
