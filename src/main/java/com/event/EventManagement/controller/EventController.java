@@ -118,7 +118,7 @@ public class EventController {
 	}
 	
 	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
-	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents,@RequestParam String eventName){
+	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents){
 		map.put("successMessage", "You are successfully registered for event");
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		eventService.registerEvents(eventId,noOfStudents,userEmail);
