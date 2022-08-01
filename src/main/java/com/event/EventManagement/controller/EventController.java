@@ -1,6 +1,7 @@
 package com.event.EventManagement.controller;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -87,10 +88,6 @@ public class EventController {
 	}
 	@RequestMapping(value = "/pendingApprovals", method=RequestMethod.GET)
 	public String pendingApproval(ModelMap map){
-		/*List<String> list = new ArrayList<>();
-		list.add("Hello");
-		list.add("watch");
-		map.put("list", list);*/
 		return "pendingApprovals";
 	}
 	/*@RequestMapping(value = "/new", method=RequestMethod.POST)
@@ -121,7 +118,7 @@ public class EventController {
 	}
 	
 	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
-	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents,HttpServletRequest request){
+	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents,@RequestParam String eventName){
 		map.put("successMessage", "You are successfully registered for event");
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		eventService.registerEvents(eventId,noOfStudents,userEmail);

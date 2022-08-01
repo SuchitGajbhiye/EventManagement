@@ -84,7 +84,7 @@
 							<td><c:out value="${todo.noOfStudents}" /></td>
 							 <%-- <td><a href="/register?id=<c:out value='${todo.eventId}' />">Register</a>
 								&nbsp;&nbsp;&nbsp;&nbsp;</td> --%>
-							<td><button onclick="register(${todo.eventId})" class="btn btn-success">Register</button></td>
+							<td><button onclick="register(${todo.eventId},${todo.eventName})" class="btn btn-success">Register</button></td>
 							<%-- <td><a href="edit?id=<c:out value='${todo.id}' />">Edit</a>
 								&nbsp;&nbsp;&nbsp;&nbsp; <a
 								href="delete?id=<c:out value='${todo.id}' />">Delete</a></td> --%>
@@ -122,14 +122,14 @@
 	
 	<script type="text/javascript">
 	var eventIdGlobal;
-	function register(eventId) {
+	function register(eventId,eventName) {
 		eventIdGlobal = eventId;
 		  document.getElementById("deletemodalAttach").style.display = "block";
 		}
 	function registerForEvent() {
 		  var noOfStudents = document.getElementById("noOfStudents").value
 		  if(document.getElementById("noOfStudents") && document.getElementById("noOfStudents").value)
-			  window.location="registerForEvent?eventId="+eventIdGlobal+"&noOfStudents="+noOfStudents;
+			  window.location="registerForEvent?eventId="+eventIdGlobal+"&noOfStudents="+noOfStudents+"&eventName="+eventName;
 		 
 		  else
 			  window.alert("Please Enter No of Students");
