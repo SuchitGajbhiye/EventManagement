@@ -47,6 +47,11 @@
 							name="organisation" required>
 					</div>
 					<div class="form-group">
+						<label for="uname">Designation:</label> <input type="text"
+							class="form-control" id="designation" placeholder="Name of College OR Institute"
+							name="designation" required>
+					</div>
+					<div class="form-group">
 						<label for="uname">Password:</label> <input type="password"
 							class="form-control" id="password" placeholder="Password"
 							name="password" required>
