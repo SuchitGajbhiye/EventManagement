@@ -34,4 +34,21 @@ public class LoginServiceImpl implements LoginService{
 		
 	}
 
+	@Override
+	public String fetchUserFirstName(String username) {
+		String firstName = null;
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			String query = "SELECT FIRSTNAME FROM EVENTUSERS WHERE EMAILID = '"+username+"'";
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+				firstName = rs.getString("FIRSTNAME");			
+		}catch(Exception e) {
+			LOG.info("Exception while fetching username in loginServiceImpl:"+e.getMessage());
+		}
+		return firstName;
+		
+	}
+
 }

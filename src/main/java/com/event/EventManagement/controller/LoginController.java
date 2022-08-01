@@ -1,5 +1,6 @@
 package com.event.EventManagement.controller;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.event.EventManagement.dbConnection.ConnectionDB;
 import com.event.EventManagement.model.RegisterModel;
 import com.event.EventManagement.service.EventService;
 import com.event.EventManagement.service.LoginService;
@@ -71,15 +73,16 @@ public class LoginController extends HttpServlet {
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
 	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request){
 		
-		String count = loginService.authorizeUser(username, password);
-		
+		String count = loginService.authorizeUser(username, password);		
+		String firstName = loginService.fetchUserFirstName(username);
 		if(!count.equals(null) && !count.equals("0")){
 			map.put("username", username);
 			try {
 				map.put("list", eventService.getEvents());
 				HttpSession session = request.getSession();
-				session.setAttribute("user", username);
+				session.setAttribute("user", firstName); 
 				session.setAttribute("role", role);
+				 session.setAttribute("userEmail", username);
 			} catch (SQLException e) {
 				LOG.info("Exception occured while authorizing user in LoginController :",e.getMessage());
 				e.printStackTrace();

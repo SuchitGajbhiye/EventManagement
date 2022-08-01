@@ -21,4 +21,6 @@ public interface EventService {
 
 	public List<EventModel> searchEvents(String searchParameter, String searchText);
 
+	public void registerEvents(int eventId, String noOfStudents, String userEmail);
+
 }

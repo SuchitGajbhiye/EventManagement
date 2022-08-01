@@ -112,12 +112,23 @@ public class EventServiceImp implements EventService{
 	@Override
 	public void registerUser(RegisterModel userModel) {
 		connection = new ConnectionDB().getNewConnection();
+		int seq = 0;
+		
 		try {
-			String query = "INSERT INTO EVENTUSERS(FIRSTNAME,LASTNAME,EMAILID,COMPANY,CITY,COUNTRY,PASSWORD,ADDRESS1,ADDRESS2,ROLE)"
-					+ "VALUES('" + userModel.getFirstName() + "','" + userModel.getLastName() + "','"
+			
+			String sequence = "select seq_eventId.nextval from dual";
+			Statement stmtSeq = connection.createStatement();
+			ResultSet rs = stmtSeq.executeQuery(sequence);
+			
+			while(rs.next()){
+				
+				seq = (rs.getInt("nextval"));			  
+	         }
+			String query = "INSERT INTO EVENTUSERS(USERID,FIRSTNAME,LASTNAME,EMAILID,COMPANY,CITY,COUNTRY,PASSWORD,ADDRESS1,ADDRESS2,ROLE,DESIGNATION)"
+					+ "VALUES('"+seq+"','" + userModel.getFirstName() + "','" + userModel.getLastName() + "','"
 					+ userModel.getEmailId() + "'," + "'" + userModel.getOrganisation() + "','" + userModel.getCity()
 					+ "','" + userModel.getCountry() + "'," + "'" + userModel.getPassword() + "','"
-					+ userModel.getAddress1() + "','" + userModel.getAddress2() + "','student')";
+					+ userModel.getAddress1() + "','" + userModel.getAddress2() + "','student','"+userModel.getDesignation()+"')";
 
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate(query);
@@ -210,6 +221,17 @@ public class EventServiceImp implements EventService{
 			LOG.info("Exception occred while search event in EventServiceImpl",e.getMessage());
 		}
 		return eventList;
+	}
+
+	@Override
+	public void registerEvents(int eventId, String noOfStudents, String userEmail) {
+		try {
+			connection = new ConnectionDB().getNewConnection();
+		}catch(Exception e) {
+			LOG.info("Exception occures while egisterEvent in EvetServiceImpl:"+e.getMessage());
+			e.printStackTrace();
+		}
+		
 	}
 	
 }

@@ -11,6 +11,14 @@ public class RegisterModel {
 	private String address2;
 	private String city;
 	private String country;
+	private String designation;
+	
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
