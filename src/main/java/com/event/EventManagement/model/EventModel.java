@@ -12,7 +12,14 @@ public class EventModel {
 	private String isUserRegistered;
 	private String approvalStatus;
 	private String emailId;
+	private String organization;
 	
+	public String getOrganization() {
+		return organization;
+	}
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
 	public String getEmailId() {
 		return emailId;
 	}
