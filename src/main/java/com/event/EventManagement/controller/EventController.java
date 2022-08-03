@@ -167,12 +167,13 @@ public class EventController {
 		if(role.equalsIgnoreCase("admin")) {
 			List<EventModel> list =	eventService.getPendingApprovalsForAdmin();
 			map.put("pendingApprovalsAdmin", list);
+			return "pendingApprovalsAdmin";
 		}else {
 			List<EventModel> list =	eventService.getPendingApprovalsForStudent(userEmail);
 			map.put("pendingApprovalsUser", list);
-		}
+			return "pendingApprovalsUser";
+		}		
 		
-		return "pendingApprovals";
 	}
 	
 	
