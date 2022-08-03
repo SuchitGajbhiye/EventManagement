@@ -107,8 +107,8 @@ public class EventServiceImp implements EventService{
 		connection = new ConnectionDB().getNewConnection();
 		int seq =0;
 		Integer count = 0;
-		String queryForDuplicateRecord = "SELECT COUNT(*) AS DUPLICATERECORD FROM EVENTS WHERE EVENTNAME = '"+model.getEventName()+"',"
-				+ "AND EVENTLOCATION = '"+model.getEventLocation()+"',AND EVENTDATE = '"+model.getEventDate()+"'";
+		String queryForDuplicateRecord = "SELECT COUNT(*) AS DUPLICATERECORD FROM EVENTS WHERE EVENTNAME = '"+model.getEventName()+"'"
+				+ "AND EVENTLOCATION = '"+model.getEventLocation()+"'AND EVENTDATE = '"+model.getEventDate()+"'";
 		try {
 			Statement stmtcount = connection.createStatement();
 			ResultSet rsCount = stmtcount.executeQuery(queryForDuplicateRecord);
@@ -116,7 +116,7 @@ public class EventServiceImp implements EventService{
 				count = rsCount.getInt("DUPLICATERECORD");
 			}
 			
-			if(count==0) {
+			if(count>0) {
 				return "Event Already Created";
 			}else {
 				

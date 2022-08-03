@@ -31,12 +31,12 @@ if(name!=null){
 			<form method="post" action="createEvent">
 				<fieldset class="form-group">
 					<label>Event Name</label> 
-					<input type="text" name="eventName" required="required" class="form-control" value="<c:out value='${eventDetails.eventName}'">
+					<input type="text" name="eventName" required="required" class="form-control" value="<c:out value='${eventDetails.eventName}'/>">
 				</fieldset>
 
 				<fieldset class="form-group">
 					<label>Event Venue</label> <input type="text"
-						class="form-control" required="required" name="eventLocation" value="<c:out value='${eventDetails.eventLocation}'">
+						class="form-control" required="required" name="eventLocation" value="<c:out value='${eventDetails.eventLocation}'/>">
 				</fieldset>
 
 				<!-- <fieldset class="form-group">
@@ -49,18 +49,24 @@ if(name!=null){
 
 				<fieldset class="form-group">
 					<label>Event Date</label> <input type="date" class="form-control"
-						name="eventDate" required="required" value="<c:out value='${eventDetails.eventDate}'">
+						name="eventDate" required="required" value="<c:out value='${eventDetails.eventDate}'/>">
 				</fieldset>
 				
 				<fieldset class="form-group">
 					<label>No of Max Students allowed</label> <input type="text" pattern="\d*" maxlength="3" class="form-control"
-						name="noOfStudents" required="required" value="<c:out value='${eventDetails.noOfStudents}'">
+						name="noOfStudents" required="required" value="<c:out value='${eventDetails.noOfStudents}'/>">
 				</fieldset>
 				<%if(request.getSession().getAttribute("successMessage")!=null){%>
 				<div class="alert alert-success center" role="alert">
+				<p>${successMessage}</p>
+				</div>
+				<%} else{%>
+				<div class="alert alert-warning center" role="alert">
+				<p>${errorMessage}</p>
+				</div>
 				<%} %>
 				<button  type="submit" class="btn btn-primary">Submit</button>
-				<p>${successMessage}</p>
+				
 				</div>
 				
 				<%-- <a href="<%=request.getContextPath()%>/createNewEvent"

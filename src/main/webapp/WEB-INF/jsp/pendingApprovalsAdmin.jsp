@@ -22,7 +22,7 @@
   }
 </style>
 <body>
-<jsp:include page="userMenu.jsp"></jsp:include>
+<jsp:include page="menu.jsp"></jsp:include>
 
 	<header>
 	

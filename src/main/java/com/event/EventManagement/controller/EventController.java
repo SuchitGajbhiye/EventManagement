@@ -62,19 +62,14 @@ public class EventController {
 		String message = null;
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		message = eventService.createEvent(model);
-		try {
-			if(message!=null && message.equalsIgnoreCase("Success")) {
-				map.put("successMessage", "Event Created Successfully");
-			}else {
-				map.put("errorMesage", "Event Already Exist");
-			}
-			map.put("list", eventService.getEvents(userEmail));
-			
+		if(message!=null && message.equalsIgnoreCase("Success")) {
+			map.put("successMessage", "Event Created Successfully");
 			request.getSession().setAttribute("successMessage","Event Created Successfully");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}else {
+			map.put("errorMesage", "Event Already Exist");
+			request.getSession().setAttribute("errorMessage","Event Already Exist");
 		}
+		//map.put("list", eventService.getEvents(userEmail));
 		return "createEvent";
 	}
 	@RequestMapping(value = "/new", method=RequestMethod.GET)
