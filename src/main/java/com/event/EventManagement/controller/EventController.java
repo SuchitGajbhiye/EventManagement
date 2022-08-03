@@ -38,9 +38,10 @@ public class EventController {
 	public String getAllEvents(ModelMap map,HttpServletRequest request){
 		String value  = (String) request.getSession().getAttribute("user");
 		String role  = (String) request.getSession().getAttribute("role");
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		if(value!=null){
 		try {
-			map.put("list", eventService.getEvents());
+			map.put("list", eventService.getEvents(userEmail));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,10 +59,17 @@ public class EventController {
 
 	@RequestMapping(value = "/createEvent", method=RequestMethod.POST)
 	public String createNewEvent(ModelMap map,EventModel model,HttpServletRequest request){
-		eventService.createEvent(model);
+		String message = null;
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		message = eventService.createEvent(model);
 		try {
-			map.put("list", eventService.getEvents());
-			map.put("successMessage", "Event Created Successfully");
+			if(message!=null && message.equalsIgnoreCase("Success")) {
+				map.put("successMessage", "Event Created Successfully");
+			}else {
+				map.put("errorMesage", "Event Already Exist");
+			}
+			map.put("list", eventService.getEvents(userEmail));
+			
 			request.getSession().setAttribute("successMessage","Event Created Successfully");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -105,11 +113,12 @@ public class EventController {
 		return "createEvent";
 	}
 	@RequestMapping(value = "/delete", method=RequestMethod.GET)
-	public String delete(ModelMap map,@RequestParam int id){
+	public String delete(ModelMap map,@RequestParam int id,HttpServletRequest request){
 		//write a method to delete the event based on ID
 		try {
+			String userEmail = (String) request.getSession().getAttribute("userEmail");
 			eventService.deleteEvent(id);
-			map.put("list", eventService.getEvents());			
+			map.put("list", eventService.getEvents(userEmail));			
 		} catch (SQLException e) {
 			LOG.info("Exception occures while edit events in EventController:",e.getMessage());
 			e.printStackTrace();
@@ -123,7 +132,7 @@ public class EventController {
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		eventService.registerEvents(eventId,noOfStudents,userEmail);
 		try {
-			map.put("list", eventService.getEvents());
+			map.put("list", eventService.getEvents(userEmail));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,5 +160,20 @@ public class EventController {
 		return "eventsListUser";
 	}
 	
-
+	@RequestMapping(value = "/getPendingApprovals", method=RequestMethod.GET)
+	public String getPendingApproval(ModelMap map,HttpServletRequest request){
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		String role = (String) request.getSession().getAttribute("role");
+		if(role.equalsIgnoreCase("admin")) {
+			List<EventModel> list =	eventService.getPendingApprovalsForAdmin();
+			map.put("pendingApprovalsAdmin", list);
+		}else {
+			List<EventModel> list =	eventService.getPendingApprovalsForStudent(userEmail);
+			map.put("pendingApprovalsUser", list);
+		}
+		
+		return "pendingApprovals";
+	}
+	
+	
 }

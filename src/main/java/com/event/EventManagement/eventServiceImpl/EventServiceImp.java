@@ -23,17 +23,19 @@ public class EventServiceImp implements EventService{
 	Connection connection;
 
 	@Override
-	public List<EventModel> getEvents() throws SQLException {
-		System.out.println("Object created");
+	public List<EventModel> getEvents(String userEmail) throws SQLException {
+		String eventRegQuery = null;
 		LOG.info("This is info level log");
 		String query = "select * from events order by eventid desc";
+		
+		
 		connection = new ConnectionDB().getNewConnection();
 		
-		List<EventModel> eventList = new ArrayList<>();		
+		List<EventModel> eventList = new ArrayList<>();	
+		List<Integer> eventIdListForUser = new ArrayList<>();
 		try {
 			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			
+			ResultSet rs = stmt.executeQuery(query);			
 			while(rs.next()){
 				EventModel event = new EventModel();
 				event.setEventId(rs.getInt("eventid"));
@@ -43,12 +45,31 @@ public class EventServiceImp implements EventService{
 				event.setNoOfStudents(rs.getString("NUMBER_OF_STUDENTS"));	
 				eventList.add(event);				  
 	         }
+			if(userEmail!=null) {
+				eventRegQuery = "SELECT EVENTID FROM EVENT_REG_SUMMARY WHERE REGISTER_BY = '"+userEmail+"'";
+				 rs = stmt.executeQuery(eventRegQuery);
+				while(rs.next()) {
+					eventIdListForUser.add(rs.getInt("EVENTID"));
+				}
+				
+			}			
 			stmt.close();
 			connection.close();
+			
+			if(eventIdListForUser.isEmpty() || eventIdListForUser==null) {
+				return eventList;
+			}else {
+				for (EventModel model : eventList) {
+					if(eventIdListForUser.contains(model.getEventId())) {
+						model.setIsUserRegistered("Y");
+					}else {
+						model.setIsUserRegistered("N");
+					}
+				}
+				return eventList;
+			}
 		} catch (SQLException e) {			
 			e.printStackTrace();
-		}finally {
-			connection.close();
 		}
 		return eventList;
 	}
@@ -82,10 +103,24 @@ public class EventServiceImp implements EventService{
 	}
 	
 	@Override
-	public void createEvent(EventModel model) {
+	public String createEvent(EventModel model) {
 		connection = new ConnectionDB().getNewConnection();
 		int seq =0;
+		Integer count = 0;
+		String queryForDuplicateRecord = "SELECT COUNT(*) AS DUPLICATERECORD FROM EVENTS WHERE EVENTNAME = '"+model.getEventName()+"',"
+				+ "AND EVENTLOCATION = '"+model.getEventLocation()+"',AND EVENTDATE = '"+model.getEventDate()+"'";
 		try {
+			Statement stmtcount = connection.createStatement();
+			ResultSet rsCount = stmtcount.executeQuery(queryForDuplicateRecord);
+			while(rsCount.next()) {
+				count = rsCount.getInt("DUPLICATERECORD");
+			}
+			
+			if(count==0) {
+				return "Event Already Created";
+			}else {
+				
+			
 			String sequence = "select seq_eventId.nextval from dual";
 			Statement stmtSeq = connection.createStatement();
 			ResultSet rs = stmtSeq.executeQuery(sequence);
@@ -102,10 +137,14 @@ public class EventServiceImp implements EventService{
 			stmt.executeUpdate(query);
 			stmt.close();
 			connection.close();
+			return "Success";
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+		
 
 	}
 
@@ -243,10 +282,63 @@ public class EventServiceImp implements EventService{
 		connection.close();
 		
 		}catch(Exception e) {
-			LOG.info("Exception occures while egisterEvent in EvetServiceImpl:"+e.getMessage());
+			LOG.info("Exception occures while registerEvent in EventServiceImpl:"+e.getMessage());
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public List<EventModel> getPendingApprovalsForAdmin() {
+		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE APPROVAL_STATUS = 'PENDING'";
+		Statement stmt = null;
+		List<EventModel> list = new ArrayList<>();
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				EventModel model = new EventModel();
+				model.setEventId(rs.getInt("EVENTID"));
+				model.setEventName(rs.getString("EVENTNAME"));
+				model.setEventLocation(rs.getString("EVENTLOCATION"));
+				model.setEmailId(rs.getString("REGISTER_BY"));
+				model.setEventDate(rs.getString("EVENTDATE"));
+				model.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
+				list.add(model);
+			}
+		}catch(Exception e) {
+			LOG.info("Exception occures while getting pending approval data for admin in EventServiceImpl"+e.getMessage());
+			e.printStackTrace();
+		}
+		return list;		
+		
+	}
+
+	@Override
+	public List<EventModel> getPendingApprovalsForStudent(String emailId) {
+		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE REGISTER_BY = '"+emailId+"'";
+		Statement stmt = null;
+		List<EventModel> list = new ArrayList<>();
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				EventModel model = new EventModel();
+				model.setEventId(rs.getInt("EVENTID"));
+				model.setEventName(rs.getString("EVENTNAME"));
+				model.setEventLocation(rs.getString("EVENTLOCATION"));
+				model.setEmailId(rs.getString("REGISTER_BY"));
+				model.setEventDate(rs.getString("EVENTDATE"));
+				model.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
+				list.add(model);
+			}
+		}catch(Exception e) {
+			LOG.info("Exception occures while getting pending approval data for student in EventServiceImpl"+e.getMessage());
+			e.printStackTrace();
+		}
+		return list;		
 	}
 	
 }

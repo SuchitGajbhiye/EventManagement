@@ -12,7 +12,14 @@ public class RegisterModel {
 	private String city;
 	private String country;
 	private String designation;
+	private String isUserRegistered;
 	
+	public String getIsUserRegistered() {
+		return isUserRegistered;
+	}
+	public void setIsUserRegistered(String isUserRegistered) {
+		this.isUserRegistered = isUserRegistered;
+	}
 	public String getDesignation() {
 		return designation;
 	}
@@ -83,7 +90,8 @@ public class RegisterModel {
 	public String toString() {
 		return "RegisterModel [firstName=" + firstName + ", lastName=" + lastName + ", emailId=" + emailId
 				+ ", organisation=" + organisation + ", password=" + password + ", phoneNumber=" + phoneNumber
-				+ ", address1=" + address1 + ", address2=" + address2 + ", city=" + city + ", country=" + country + "]";
+				+ ", address1=" + address1 + ", address2=" + address2 + ", city=" + city + ", country=" + country
+				+ ", designation=" + designation + ", isUserRegistered=" + isUserRegistered + "]";
 	}
 	
 

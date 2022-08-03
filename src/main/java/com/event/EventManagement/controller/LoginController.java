@@ -75,14 +75,16 @@ public class LoginController extends HttpServlet {
 		
 		String count = loginService.authorizeUser(username, password);		
 		String firstName = loginService.fetchUserFirstName(username);
+		HttpSession session = request.getSession();
+		session.setAttribute("user", firstName); 
+		session.setAttribute("role", role);
+		session.setAttribute("userEmail", username);
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		if(!count.equals(null) && !count.equals("0")){
 			map.put("username", username);
 			try {
-				map.put("list", eventService.getEvents());
-				HttpSession session = request.getSession();
-				session.setAttribute("user", firstName); 
-				session.setAttribute("role", role);
-				 session.setAttribute("userEmail", username);
+				map.put("list", eventService.getEvents(userEmail));
+				
 			} catch (SQLException e) {
 				LOG.info("Exception occured while authorizing user in LoginController :",e.getMessage());
 				e.printStackTrace();

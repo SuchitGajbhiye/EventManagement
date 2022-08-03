@@ -7,13 +7,13 @@ import com.event.EventManagement.model.EventModel;
 import com.event.EventManagement.model.RegisterModel;
 
 public interface EventService {
-	public List<EventModel> getEvents() throws SQLException;
+	public List<EventModel> getEvents(String userEmail) throws SQLException;
 
 	public boolean isUserExist(RegisterModel userModel);
 
 	public void registerUser(RegisterModel userModel);
 
-	public void createEvent(EventModel model);
+	public String createEvent(EventModel model);
 
 	public EventModel getEventBasedOnId(int id);
 
@@ -22,5 +22,9 @@ public interface EventService {
 	public List<EventModel> searchEvents(String searchParameter, String searchText);
 
 	public void registerEvents(int eventId, String noOfStudents, String userEmail);
+
+	public List<EventModel> getPendingApprovalsForAdmin();
+
+	public List<EventModel> getPendingApprovalsForStudent(String emailId);
 
 }

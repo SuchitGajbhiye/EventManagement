@@ -9,6 +9,34 @@ public class EventModel {
 	private String createdBy;
 	private String updatedBy;
 	private String eventDescription;
+	private String isUserRegistered;
+	private String approvalStatus;
+	private String emailId;
+	
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	public String getEventDescription() {
+		return eventDescription;
+	}
+	public void setEventDescription(String eventDescription) {
+		this.eventDescription = eventDescription;
+	}
+	public String getApprovalStatus() {
+		return approvalStatus;
+	}
+	public void setApprovalStatus(String approvalStatus) {
+		this.approvalStatus = approvalStatus;
+	}
+	public String getIsUserRegistered() {
+		return isUserRegistered;
+	}
+	public void setIsUserRegistered(String isUserRegistered) {
+		this.isUserRegistered = isUserRegistered;
+	}
 	
 	public Integer getEventId() {
 		return eventId;
@@ -62,7 +90,8 @@ public class EventModel {
 	public String toString() {
 		return "EventModel [eventId=" + eventId + ", eventName=" + eventName + ", eventDate=" + eventDate
 				+ ", eventLocation=" + eventLocation + ", noOfStudents=" + noOfStudents + ", createdBy=" + createdBy
-				+ ", updatedBy=" + updatedBy + ", Eventdescription=" + eventDescription + "]";
+				+ ", updatedBy=" + updatedBy + ", eventDescription=" + eventDescription + ", isUserRegistered="
+				+ isUserRegistered + ", approvalStatus=" + approvalStatus + ", emailId=" + emailId + "]";
 	}
 	
 	
