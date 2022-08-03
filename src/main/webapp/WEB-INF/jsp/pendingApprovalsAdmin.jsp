@@ -44,19 +44,23 @@
 					    
 						<th>User Name</th>
 						<th>Institution</th>
+						<th>Event ID</th>
 						<th>Event Name</th>
+						<th>Event Date</th>
 						<th>No of Students</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="todo" items="${list}">
+					<c:forEach var="todo" items="${pendingApprovalsAdmin}">
 
 						<tr>
 						 
 							<td><c:out value="${todo.emailId}" /></td>
-							<td><c:out value="${todo.organisation}" /></td>
+							<td><c:out value="${todo.organization}" /></td>
+							<td><c:out value="${todo.eventId}" /></td>
 							<td><c:out value="${todo.eventName}" /></td>
+							<td><c:out value="${todo.eventDate}" /></td>
 							<td><c:out value="${todo.noOfStudents}" /></td>
 							<td>
 							<button onclick="register(${todo.eventId})" class="btn btn-success">Approve</button>

@@ -7,7 +7,7 @@
 
 		<ul class="navbar-nav navbar-collapse justify-content-start">
 		    <li><a href="<%= request.getContextPath() %>/eventsSummary" class="nav-link">Events Summary</a></li>
-			<li><a href="<%= request.getContextPath() %>/pendingApprovals" class="nav-link">Pending Approvals</a></li>
+			<li><a href="<%= request.getContextPath() %>/getPendingApprovals" class="nav-link">Pending Approvals</a></li>
 			
 		</ul>
 		<ul class="navbar-nav navbar-collapse justify-content-end">

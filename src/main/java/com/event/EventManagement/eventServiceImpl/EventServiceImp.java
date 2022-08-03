@@ -290,8 +290,8 @@ public class EventServiceImp implements EventService{
 
 	@Override
 	public List<EventModel> getPendingApprovalsForAdmin() {
-		String query = "SELECT register_by,(select COMPANY  from eventusers where emailid = register_by )organization,eventid,"
-				+ "eventname,no_of_students,eventdate FROM EVENT_REG_SUMMARY WHERE APPROVAL_STATUS = 'PENDING' "
+		String query = "SELECT REGISTER_BY,(select COMPANY  from eventusers where emailid = register_by )organization,EVENTID,"
+				+ "EVENTNAME,no_of_students,EVENTDATE,EVENTLOCATION,APPROVAL_STATUS FROM EVENT_REG_SUMMARY WHERE APPROVAL_STATUS = 'PENDING' "
 				+ "and register_by is not null";
 		Statement stmt = null;
 		List<EventModel> list = new ArrayList<>();
@@ -306,7 +306,7 @@ public class EventServiceImp implements EventService{
 				model.setEventLocation(rs.getString("EVENTLOCATION"));
 				model.setEmailId(rs.getString("REGISTER_BY"));
 				model.setEventDate(rs.getString("EVENTDATE"));
-				model.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
+				model.setNoOfStudents(rs.getString("no_of_students"));
 				model.setOrganization(rs.getString("organization"));
 				list.add(model);
 			}

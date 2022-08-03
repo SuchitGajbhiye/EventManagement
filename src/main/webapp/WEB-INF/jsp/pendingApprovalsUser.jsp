@@ -46,19 +46,17 @@
                         <th>Event Name</th>
                         <th>Venue</th>
                         <th>Date</th>
-                        <th>No of Students</th>
                         <th>Approval Status</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="todo" items="${list}">
+					<c:forEach var="todo" items="${pendingApprovalsUser}">
 
 						<tr>
 						 <td><c:out value="${todo.eventId}" /></td>
 							<td><c:out value="${todo.eventName}" /></td>
 							<td><c:out value="${todo.eventLocation}" /></td>
 							<td><c:out value="${todo.eventDate}" /></td>
-							<td><c:out value="${todo.noOfStudents}" /></td>
 					        <td><c:out value="${todo.approvalStatus}" /></td>
 							
 						</tr>
