@@ -60,8 +60,8 @@ if(name!=null){
 				<div class="alert alert-success center" role="alert">
 				<p>${successMessage}</p>
 				</div>
-				<%} else{%>
-				<div class="alert alert-warning center" role="alert">
+				<%}if(request.getSession().getAttribute("errorMessage")!=null){%>
+				<div class="alert alert-success center" role="alert">
 				<p>${errorMessage}</p>
 				</div>
 				<%} %>

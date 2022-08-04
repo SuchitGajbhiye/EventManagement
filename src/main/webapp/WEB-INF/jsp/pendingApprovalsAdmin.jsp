@@ -63,8 +63,8 @@
 							<td><c:out value="${todo.eventDate}" /></td>
 							<td><c:out value="${todo.noOfStudents}" /></td>
 							<td>
-							<button onclick="register(${todo.eventId})" class="btn btn-success">Approve</button>
-          				    <button onclick="register(${todo.eventId})" class="btn btn-warning">Reject</button>
+							<button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="APPROVED" class="btn btn-success">Approve</button>
+          				    <button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="REJECTED" class="btn btn-warning">Reject</button>
           				    </td>
 						</tr>
 					</c:forEach>
@@ -117,6 +117,11 @@
 		 
 		  window.location="searchEvents?searchText="+searchText+"&searchParameter="+searchParameter;
 		}
+	function takeAction(eventId,eventName) {
+		  var action = document.getElementById("action").value
+		  window.location="takeAction?eventId="+eventId+"&eventName="+eventName+"&action="+action;
+		}
+	
 	</script>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
