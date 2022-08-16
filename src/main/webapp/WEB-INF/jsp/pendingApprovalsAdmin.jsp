@@ -20,6 +20,20 @@
     margin:-50px 0 0 -100px; /* [-(height/2)px 0 0 -(width/2)px] */
     display:none;
   }
+  /* Style buttons */
+.btnDownload {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+/* Darker background on mouse-over */
+.btnDownload:hover {
+  background-color: RoyalBlue;
+}
 </style>
 <body>
 <jsp:include page="menu.jsp"></jsp:include>
@@ -38,6 +52,8 @@
 		<!-- <img src="/jsp/eventPlanning.jpg" alt="View" style="width:304px;height:228px;"> -->
 		<!--  <img src="eventPlanning.jpg" class="img-fluid" border=0 width="100px" height="100px"> -->
 			<h3 class="text-center">List of Pending Approvals</h3>
+			<button onclick="downloadData();" class="btnDownload" style="float: right;"><i class="fa fa-download"></i> Download</button>
+			</br></br>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -120,6 +136,9 @@
 	function takeAction(eventId,eventName) {
 		  var action = document.getElementById("action").value
 		  window.location="takeAction?eventId="+eventId+"&eventName="+eventName+"&action="+action;
+		}
+	function downloadData() {
+		  window.location="downloadEventData";
 		}
 	
 	</script>

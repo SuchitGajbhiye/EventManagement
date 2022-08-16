@@ -20,6 +20,7 @@
 	</script>
 	<div class="container col-md-5" style="overflow: auto;padding-top: 15px;">
 	<div class="card">
+	<!-- <img src="../common/eventPlanning.jpg"> -->
 			<div class="card-body">
 		<h1 style="text-align: left;font-size: 20px;">Login Form</h1>
 		<%-- <form action="<%=request.getContextPath()%>/login" method="post"> --%>

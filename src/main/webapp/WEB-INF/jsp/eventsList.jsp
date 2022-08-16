@@ -25,6 +25,9 @@
 		<!-- <img src="/jsp/eventPlanning.jpg" alt="View" style="width:304px;height:228px;"> -->
 		<!--  <img src="eventPlanning.jpg" class="img-fluid" border=0 width="100px" height="100px"> -->
 			<h3 class="text-center">List of Events</h3>
+			<button onclick="downloadData();" class="btnDownload" style="float: right;"><i class="fa fa-download"></i> Download</button>
+			</br>
+			</br>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -62,7 +65,13 @@
 			</table>
 		</div>
 	</div>
+	<script type="text/javascript">
+
+	function downloadData() {
+		  window.location="downloadEventData";
+		}
 	
+	</script>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
