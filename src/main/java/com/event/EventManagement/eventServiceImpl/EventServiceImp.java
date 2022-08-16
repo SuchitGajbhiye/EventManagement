@@ -1,12 +1,36 @@
 package com.event.EventManagement.eventServiceImpl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Message;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.Session;
+
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -265,14 +289,19 @@ public class EventServiceImp implements EventService{
 	@Override
 	public void registerEvents(int eventId, String noOfStudents, String userEmail) {
 		String eventName = null;
+		String eventLocation = null;
+		String eventDate = null;
 		Statement stmt = null;
-		String eventNameQuery = "SELECT EVENTNAME FROM EVENTS WHERE EVENTID = '"+eventId+"'";
+		String eventNameQuery = "SELECT * FROM EVENTS WHERE EVENTID = '"+eventId+"'";
 		try {
 			connection = new ConnectionDB().getNewConnection();
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(eventNameQuery);
-			while(rs.next())
+			while(rs.next()) {
 				eventName = rs.getString("EVENTNAME");
+				//two fields needs to be added
+			}
+				
 			
 		
 		String query = "INSERT INTO EVENT_REG_SUMMARY(EVENTID,EVENTNAME,REGISTER_BY,REGISTER_ON,NO_OF_STUDENTS,APPROVAL_STATUS)"
@@ -342,6 +371,221 @@ public class EventServiceImp implements EventService{
 			e.printStackTrace();
 		}
 		return list;		
+	}
+
+	@Override
+	public void updateApprovalStatus(String eventId, String eventName, String status) {
+		Statement stmt = null;
+		String query = "UPDATE EVENT_REG_SUMMARY SET STATUS = '"+status+"' WHERE EVENTID = '"+eventId+"'";
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			stmt.executeUpdate(query);
+			stmt.close();
+			connection.close();	
+			//Mail sent code
+			sendEmail(eventId,status);
+			
+		}catch(Exception e) {
+			LOG.info("Exception occures while updating approval status"+e.getMessage());
+		}
+		
+	}
+
+	public void sendEmail(String eventId, String status) {
+		String to = "suchitgajbhiye@gmail.com";//change accordingly  
+	      //String from = "sonoojaiswal1987@gmail.com";//change accordingly  
+	      String host = "localhost";//or IP address  
+	  
+	      String from = "eventService@gmail.com";
+	      try {	    	  
+	     
+	      
+		     //Get the session object  
+		      Properties properties = System.getProperties();  
+		      properties.setProperty("mail.smtp.host", "mailhost.avaya.com");
+			    properties.setProperty("mail.smtp.port","25" );
+			    properties.setProperty("mail.transport.protocol", "SMTP");
+			    properties.setProperty("mail.smtp.timeout", "10000");  
+		      javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);  
+		  
+		     MimeMessage message = new MimeMessage(session);  
+			 try {
+				message.setFrom(new InternetAddress(from));
+			} catch (Exception e) {
+				//e.printStackTrace();
+				LOG.info("Exception in sendEmail():"+e.getMessage());
+			}  
+			 message.addRecipients(Message.RecipientType.TO,new InternetAddress().parse(to));  
+			 message.setSubject("Test Email");  
+			 //message.setText(text); 		
+			 message.setContent("This is demo message consider as Content","text/html");
+
+			 // Send message  
+			 Transport.send(message);  
+			 //LOG.info("message sent successfully....");
+	      }catch(Exception e) {
+	    	  LOG.info("Exception while sending email"+e.getMessage());
+	    	  e.printStackTrace();
+	    	  
+	      }
+	}
+
+	@Override
+	public void downloadEventData(HttpServletRequest request,HttpServletResponse response) {
+		String query = "SELECT * FROM EVENT_REG_SUMMARY";
+		Statement stmt = null;
+		List<EventModel> list = new ArrayList<>();
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				EventModel eventObj = new EventModel();
+				eventObj.setEventId(rs.getInt("EVENTID"));
+				eventObj.setEventName(rs.getString("EVENTNAME"));
+				eventObj.setEmailId(rs.getString("REGISTER_BY"));
+				eventObj.setEventDate(rs.getString("EVENTDATE"));
+				eventObj.setNoOfStudents(rs.getString("NO_OF_STUDENTS"));
+				eventObj.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
+				eventObj.setEventLocation(rs.getString("EVENTLOCATION"));
+				list.add(eventObj);
+			}
+			
+			downloadEventList(list,request,response);
+		}catch(Exception e) {
+			LOG.info("Exception occures while downloading excel file"+e.getMessage());
+			e.printStackTrace();
+		}		
+		
+	}
+
+	private void downloadEventList(List<EventModel> list,HttpServletRequest request,HttpServletResponse response) {
+
+
+		//logger.info("Entering method : writeUploadedLogtoExcel");
+		String fileName = "EVENTLIST" + ".xlsx";
+		try {
+			//deleteTempFile(fileName);
+			SXSSFWorkbook wb = new SXSSFWorkbook(100);	
+			Font headerFont = wb.createFont();
+			headerFont.setFontHeightInPoints((short) 12);
+			headerFont.setColor(IndexedColors.WHITE.getIndex());
+			((XSSFFont) headerFont).setBold(true);
+	
+			Font datacellFont = wb.createFont();
+			datacellFont.setFontHeightInPoints((short) 10);
+			datacellFont.setColor(IndexedColors.BLACK.getIndex());
+	
+			CellStyle headerCellStyle = wb.createCellStyle();
+			headerCellStyle = wb.createCellStyle();
+			headerCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			headerCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			HSSFWorkbook hwb = new HSSFWorkbook();
+			HSSFPalette palette = hwb.getCustomPalette();
+			HSSFColor headerColor = palette.findSimilarColor(113, 112, 116);
+			headerCellStyle.setFillForegroundColor(headerColor.getIndex());
+			headerCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			headerCellStyle.setFont(headerFont);
+	
+			Sheet sh = wb.createSheet();
+			Row headerRow = sh.createRow(0); // For Titles
+			headerRow.setHeightInPoints(20);
+			Cell headerCell = null;
+	
+			int index = 0;
+			String[] headerCols = { "EVENT ID", "EVENT NAME", "REGISTER_BY", "EVENT DATE","NO_OF_STUDENTS","APPROVAL_STATUS",
+					"EVENT LOCATION"};
+	
+			if (headerCols != null && headerCols.length > 0) {
+				for (String headerTitle : headerCols) {
+					headerCell = headerRow.createCell(index);
+					headerCell.setCellValue(headerTitle); // Header Title - Set a
+					// string value for the
+					// cell.
+					headerCell.setCellStyle(headerCellStyle); // Header style - Set
+					// the style for the
+					// cell
+					sh.autoSizeColumn(index); // Adjusts the column width to fit the
+					// contents.
+					index = index + 1;
+				}
+			}
+			CellStyle dataCellStyle = wb.createCellStyle();
+			dataCellStyle = wb.createCellStyle();
+			dataCellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+			dataCellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+			dataCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+			dataCellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			dataCellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+			dataCellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			dataCellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setWrapText(true);
+			dataCellStyle.setFont(datacellFont);
+	
+			int rownum = 1;
+			for (EventModel model : list) {
+				
+				Row row = sh.createRow(rownum);
+	
+				// Set the Log ID value at position 0
+				Cell cellA0 = row.createCell(0);
+				cellA0.setCellValue(model.getEventId() );
+				cellA0.setCellStyle(dataCellStyle);
+	
+				// Set the Contract Number value at position 1
+				Cell cellA1 = row.createCell(1);
+				cellA1.setCellValue(model.getEventName());
+				cellA1.setCellStyle(dataCellStyle);
+	
+				// Set the Opportunity Number value at position 2
+				Cell cellA2 = row.createCell(2);
+				cellA2.setCellValue(model.getEmailId());
+				cellA2.setCellStyle(dataCellStyle);
+				
+				Cell cellA3 = row.createCell(3);
+				cellA3.setCellValue(model.getEventDate());
+				cellA3.setCellStyle(dataCellStyle);
+				
+				Cell cellA4 = row.createCell(4);
+				cellA4.setCellValue(model.getNoOfStudents());
+				cellA4.setCellStyle(dataCellStyle);
+				
+				Cell cellA5 = row.createCell(5);
+				cellA5.setCellValue(model.getApprovalStatus());
+				cellA5.setCellStyle(dataCellStyle);
+				
+				Cell cellA6 = row.createCell(6);
+				cellA6.setCellValue(model.getEventLocation());
+				cellA6.setCellStyle(dataCellStyle);	
+				
+				
+				rownum++;
+			}
+	
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.addHeader("content-disposition", "attachment; filename=" + fileName);
+			Cookie fileDownloadCookie = new Cookie("fileDownload", "done");
+			fileDownloadCookie.setMaxAge(1000 * 60 * 60);
+			fileDownloadCookie.setPath("/");
+			response.addCookie(fileDownloadCookie);
+			ServletOutputStream out = response.getOutputStream();
+			wb.write(out);
+			wb.dispose();
+			//deleteTempFile(fileName);
+			out.close();
+			//logger.info("Exiting method : writeOpportunitiestoExcel");
+		} catch(IOException ie) {
+			ie.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+		}
+		
+	
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -71,8 +72,7 @@ public class LoginController extends HttpServlet {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request){
-		
+	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request,HttpServletResponse response){
 		String count = loginService.authorizeUser(username, password);		
 		String firstName = loginService.fetchUserFirstName(username);
 		HttpSession session = request.getSession();

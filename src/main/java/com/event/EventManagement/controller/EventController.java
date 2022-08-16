@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -75,6 +76,8 @@ public class EventController {
 	@RequestMapping(value = "/new", method=RequestMethod.GET)
 	public String showNewForm(ModelMap map,HttpServletRequest request){
 		String value  = (String) request.getSession().getAttribute("user");
+		request.getSession().setAttribute("erroMessage", null);
+		request.getSession().setAttribute("successMessage", null);
 		if(value!=null){
 		return "createEvent";
 		}else{
@@ -171,5 +174,26 @@ public class EventController {
 		
 	}
 	
+	@RequestMapping(value = "/updateApproval", method=RequestMethod.GET)
+	public String updateApproval(ModelMap map,HttpServletRequest request, String eventId,String eventName,String status){
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		String role = (String) request.getSession().getAttribute("role");
+		eventService.updateApprovalStatus(eventId,eventName,status);	
+	
+	return "pendingApprovalsAdmin";
+	}
+	
+	@RequestMapping(value = "/downloadEventData", method=RequestMethod.GET)
+	public String downlaodEventData(ModelMap map,HttpServletRequest request, HttpServletResponse response){
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		String role = (String) request.getSession().getAttribute("role");
+		if(userEmail==null || userEmail.isEmpty()) {
+			return "Need to return correct page";
+		}else {
+			eventService.downloadEventData(request,response);	
+			return "pendingApprovalsAdmin";
+		}	
+	
+	}
 	
 }
