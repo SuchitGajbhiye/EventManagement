@@ -299,13 +299,15 @@ public class EventServiceImp implements EventService{
 			ResultSet rs = stmt.executeQuery(eventNameQuery);
 			while(rs.next()) {
 				eventName = rs.getString("EVENTNAME");
-				//two fields needs to be added
+				eventLocation = rs.getString("EVENTLOCATION");
+				eventDate = rs.getString("EVENTDATE");				
 			}
 				
 			
 		
-		String query = "INSERT INTO EVENT_REG_SUMMARY(EVENTID,EVENTNAME,REGISTER_BY,REGISTER_ON,NO_OF_STUDENTS,APPROVAL_STATUS)"
-				+ "VALUES('"+eventId+"','"+eventName+"','"+userEmail+"',SYSDATE,'"+noOfStudents+"','PENDING')";
+		String query = "INSERT INTO EVENT_REG_SUMMARY(EVENTID,EVENTNAME,REGISTER_BY,REGISTER_ON,NO_OF_STUDENTS,APPROVAL_STATUS,"
+				+ "EVENTDATE,EVENTLOCATION)"
+				+ "VALUES('"+eventId+"','"+eventName+"','"+userEmail+"',SYSDATE,'"+noOfStudents+"','PENDING','"+eventDate+"','"+eventLocation+"')";
 		stmt.executeUpdate(query);
 		stmt.close();
 		connection.close();
