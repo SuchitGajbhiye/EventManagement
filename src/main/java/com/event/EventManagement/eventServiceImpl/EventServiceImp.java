@@ -1,6 +1,7 @@
 package com.event.EventManagement.eventServiceImpl;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -379,60 +383,73 @@ public class EventServiceImp implements EventService{
 	public void updateApprovalStatus(String eventId, String eventName, String status) {
 		Statement stmt = null;
 		String query = "UPDATE EVENT_REG_SUMMARY SET STATUS = '"+status+"' WHERE EVENTID = '"+eventId+"'";
+		String queryForEmail = "SELECT REGISTER_BY,EVENTLOCATION FROM  EVENT_REG_SUMMARY WHERE EVENTID = '"+eventId+"'";
+		String userEmail = null; 
+		String location = null;
 		try {
 			connection = new ConnectionDB().getNewConnection();
 			stmt = connection.createStatement();
 			stmt.executeUpdate(query);
+			
+			ResultSet rs = stmt.executeQuery(queryForEmail);
+			while(rs.next()) {
+				userEmail = rs.getString("REGISTER_BY");
+				location = rs.getString("EVENTLOCATION");
+			}
 			stmt.close();
 			connection.close();	
-			//Mail sent code
-			sendEmail(eventId,status);
+			//Mail sent code			
+			//sendEmail(eventId,status);
+			sendEmailtoUser(status,userEmail,location);
 			
 		}catch(Exception e) {
 			LOG.info("Exception occures while updating approval status"+e.getMessage());
 		}
 		
 	}
+	
+	public void sendEmailtoUser(String status, String userEmail,String location) {
+		String message = "THE CURRENT STATUS OF YOUR REGISTRATION IS - "+status;
+		String subject = "Approval status for your Event will be held at -"+location;		
+		String from = "sbkfmspw@gmail.com";
+		String host = "smtp.gmail.com";
+		
+		Properties properties = System.getProperties();
+		System.err.println("Properties:"+properties);
+		
+		properties.put("mail.smtp.host", host);
+		properties.put("mail.smtp.port", "465");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
+				
+		javax.mail.Session session = javax.mail.Session.getInstance(properties, new javax.mail.Authenticator() {
 
-	public void sendEmail(String eventId, String status) {
-		String to = "suchitgajbhiye@gmail.com";//change accordingly  
-	      //String from = "sonoojaiswal1987@gmail.com";//change accordingly  
-	      String host = "localhost";//or IP address  
-	  
-	      String from = "eventService@gmail.com";
-	      try {	    	  
-	     
-	      
-		     //Get the session object  
-		      Properties properties = System.getProperties();  
-		      properties.setProperty("mail.smtp.host", "mailhost.avaya.com");
-			    properties.setProperty("mail.smtp.port","25" );
-			    properties.setProperty("mail.transport.protocol", "SMTP");
-			    properties.setProperty("mail.smtp.timeout", "10000");  
-		      javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);  
-		  
-		     MimeMessage message = new MimeMessage(session);  
-			 try {
-				message.setFrom(new InternetAddress(from));
-			} catch (Exception e) {
-				//e.printStackTrace();
-				LOG.info("Exception in sendEmail():"+e.getMessage());
-			}  
-			 message.addRecipients(Message.RecipientType.TO,new InternetAddress().parse(to));  
-			 message.setSubject("Test Email");  
-			 //message.setText(text); 		
-			 message.setContent("This is demo message consider as Content","text/html");
-
-			 // Send message  
-			 Transport.send(message);  
-			 //LOG.info("message sent successfully....");
-	      }catch(Exception e) {
-	    	  LOG.info("Exception while sending email"+e.getMessage());
-	    	  e.printStackTrace();
-	    	  
-	      }
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {			
+				
+				return new PasswordAuthentication("sbkfmspw@gmail.com", "mjklaagoljptbmax");
+			}			
+		});	
+		
+		session.setDebug(true);
+		MimeMessage mimeMessage = new MimeMessage(session);
+		
+		try {
+			mimeMessage.setFrom(new InternetAddress(from));
+			mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
+			mimeMessage.setSubject(subject);
+			mimeMessage.setText(message);
+			
+			Transport.send(mimeMessage);
+			System.out.println("Mail Send successfully");
+		} catch (MessagingException e) {
+			
+			e.printStackTrace();
+		}
 	}
 
+
+	
 	@Override
 	public void downloadEventData(HttpServletRequest request,HttpServletResponse response) {
 		String query = "SELECT * FROM EVENT_REG_SUMMARY";
@@ -588,6 +605,36 @@ public class EventServiceImp implements EventService{
 		}
 		
 	
-	}
+	}	
+	
+	@Override
+	public void downloadEventPendingData(HttpServletRequest request,HttpServletResponse response) {
+		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE STATUS = 'PENDING'";
+		Statement stmt = null;
+		List<EventModel> list = new ArrayList<>();
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				EventModel eventObj = new EventModel();
+				eventObj.setEventId(rs.getInt("EVENTID"));
+				eventObj.setEventName(rs.getString("EVENTNAME"));
+				eventObj.setEmailId(rs.getString("REGISTER_BY"));
+				eventObj.setEventDate(rs.getString("EVENTDATE"));
+				eventObj.setNoOfStudents(rs.getString("NO_OF_STUDENTS"));
+				eventObj.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
+				eventObj.setEventLocation(rs.getString("EVENTLOCATION"));
+				list.add(eventObj);
+			}
+			
+			downloadEventList(list,request,response);
+		}catch(Exception e) {
+			LOG.info("Exception occures while downloading excel file"+e.getMessage());
+			e.printStackTrace();
+		}		
+		
+	}	
+	
 	
 }

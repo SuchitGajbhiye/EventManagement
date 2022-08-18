@@ -31,9 +31,9 @@ public interface EventService {
 	public List<EventModel> getPendingApprovalsForStudent(String emailId);
 
 	public void updateApprovalStatus(String eventId, String eventName, String status);
-	
-	public void sendEmail(String eventId, String status);
 
 	public void downloadEventData(HttpServletRequest request, HttpServletResponse response);
+
+	void downloadEventPendingData(HttpServletRequest request, HttpServletResponse response);
 
 }

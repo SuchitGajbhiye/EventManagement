@@ -196,4 +196,17 @@ public class EventController {
 	
 	}
 	
+	@RequestMapping(value = "/downloadEventPendingData", method=RequestMethod.GET)
+	public String downlaodEventPendingData(ModelMap map,HttpServletRequest request, HttpServletResponse response){
+		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		String role = (String) request.getSession().getAttribute("role");
+		if(userEmail==null || userEmail.isEmpty()) {
+			return "Need to return correct page";
+		}else {
+			eventService.downloadEventPendingData(request, response);
+			return "pendingApprovalsAdmin";
+		}	
+	
+	}
+	
 }

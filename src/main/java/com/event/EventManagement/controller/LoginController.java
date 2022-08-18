@@ -72,7 +72,8 @@ public class LoginController extends HttpServlet {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,HttpServletRequest request,HttpServletResponse response){
+	public String Register(ModelMap map,@RequestParam String username, @RequestParam String password,@RequestParam String role,
+			HttpServletRequest request,HttpServletResponse response){	
 		String count = loginService.authorizeUser(username, password);		
 		String firstName = loginService.fetchUserFirstName(username);
 		HttpSession session = request.getSession();

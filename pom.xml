@@ -53,11 +53,18 @@
     <artifactId>ojdbc8</artifactId>
     <scope>runtime</scope>
 </dependency>
-<dependency>
+<!-- <dependency>
     <groupId>javax.mail</groupId>
     <artifactId>mail</artifactId>
     <version>1.4</version>
-</dependency>
+</dependency> -->
+ <dependency>
+    <groupId>com.sun.mail</groupId>
+    <artifactId>javax.mail</artifactId>
+    <version>1.6.2</version>
+</dependency> 
+
+
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi</artifactId>
