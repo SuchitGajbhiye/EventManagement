@@ -128,14 +128,19 @@ public class EventController {
 	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents,HttpServletRequest request){
 		map.put("successMessage", "You are successfully registered for event");
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
-		eventService.registerEvents(eventId,noOfStudents,userEmail);
-		try {
-			map.put("list", eventService.getEvents(userEmail));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(userEmail==null || userEmail.isEmpty()) {
+			return "login";
+		}else {
+			eventService.registerEvents(eventId,noOfStudents,userEmail);
+			try {
+				map.put("list", eventService.getEvents(userEmail));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "eventsListUser";
 		}
-		return "eventsListUser";
+		
 	}
 	@RequestMapping(value = "/searchEventsPage", method=RequestMethod.GET)
 	public String searchEventsPage(ModelMap map){
@@ -178,17 +183,21 @@ public class EventController {
 	public String updateApproval(ModelMap map,HttpServletRequest request, String eventId,String eventName,String status){
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		String role = (String) request.getSession().getAttribute("role");
-		eventService.updateApprovalStatus(eventId,eventName,status);	
+		if(userEmail==null || userEmail.isEmpty()) {
+			return "login";
+		}else {
+			eventService.updateApprovalStatus(eventId,eventName,status);
+			return "pendingApprovalsAdmin";
+		}	
 	
-	return "pendingApprovalsAdmin";
 	}
 	
-	@RequestMapping(value = "/downloadEventData", method=RequestMethod.GET)
+	@RequestMapping(value = "/downloadEventSummaryData", method=RequestMethod.GET)
 	public String downlaodEventData(ModelMap map,HttpServletRequest request, HttpServletResponse response){
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		String role = (String) request.getSession().getAttribute("role");
 		if(userEmail==null || userEmail.isEmpty()) {
-			return "Need to return correct page";
+			return "login";
 		}else {
 			eventService.downloadEventData(request,response);	
 			return "pendingApprovalsAdmin";
@@ -196,12 +205,12 @@ public class EventController {
 	
 	}
 	
-	@RequestMapping(value = "/downloadEventPendingData", method=RequestMethod.GET)
+	@RequestMapping(value = "/downloadPendingApprovalData", method=RequestMethod.GET)
 	public String downlaodEventPendingData(ModelMap map,HttpServletRequest request, HttpServletResponse response){
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		String role = (String) request.getSession().getAttribute("role");
 		if(userEmail==null || userEmail.isEmpty()) {
-			return "Need to return correct page";
+			return "login";
 		}else {
 			eventService.downloadEventPendingData(request, response);
 			return "pendingApprovalsAdmin";

@@ -6,7 +6,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -106,11 +108,11 @@ public class EventServiceImp implements EventService{
 	public boolean isUserExist(RegisterModel userModel) {
 		String email = null;
 		String query = "select emailId from eventusers where emailId = '"+userModel.getEmailId()+"'";
-		Statement stmt;
+		Statement stmt= null;
 		boolean userExist = false;
+		connection = new ConnectionDB().getNewConnection();
 		
-		try {
-			connection = new ConnectionDB().getNewConnection();
+		try {	
 			
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -123,8 +125,17 @@ public class EventServiceImp implements EventService{
 			}else if(email.equalsIgnoreCase(userModel.getEmailId())) {
 				userExist = true;
 			}
+			stmt.close();
+			connection.close();
 		} catch (SQLException e) {			
 			e.printStackTrace();
+			try {
+				stmt.close();
+				connection.close();
+			} catch (SQLException e1) {				
+				e1.printStackTrace();
+			}
+			
 		}
 		
 		return userExist;
@@ -294,7 +305,7 @@ public class EventServiceImp implements EventService{
 	public void registerEvents(int eventId, String noOfStudents, String userEmail) {
 		String eventName = null;
 		String eventLocation = null;
-		String eventDate = null;
+		Date eventDate = null;
 		Statement stmt = null;
 		String eventNameQuery = "SELECT * FROM EVENTS WHERE EVENTID = '"+eventId+"'";
 		try {
@@ -304,14 +315,16 @@ public class EventServiceImp implements EventService{
 			while(rs.next()) {
 				eventName = rs.getString("EVENTNAME");
 				eventLocation = rs.getString("EVENTLOCATION");
-				eventDate = rs.getString("EVENTDATE");				
+				eventDate = rs.getDate("EVENTDATE");				
 			}
+			
+			String newDate = new SimpleDateFormat("dd-MM-yyyy").format(eventDate);			
 				
 			
 		
 		String query = "INSERT INTO EVENT_REG_SUMMARY(EVENTID,EVENTNAME,REGISTER_BY,REGISTER_ON,NO_OF_STUDENTS,APPROVAL_STATUS,"
-				+ "EVENTDATE,EVENTLOCATION)"
-				+ "VALUES('"+eventId+"','"+eventName+"','"+userEmail+"',SYSDATE,'"+noOfStudents+"','PENDING','"+eventDate+"','"+eventLocation+"')";
+				+ "EVENTDATE,EVENTLOCATION)"				
+				+ "VALUES('"+eventId+"','"+eventName+"','"+userEmail+"',SYSDATE,'"+noOfStudents+"','PENDING','"+newDate+"','"+eventLocation+"')";
 		stmt.executeUpdate(query);
 		stmt.close();
 		connection.close();

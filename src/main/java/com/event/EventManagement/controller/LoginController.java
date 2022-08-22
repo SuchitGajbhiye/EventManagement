@@ -112,7 +112,7 @@ public class LoginController extends HttpServlet {
 			eventService.registerUser(model);
 			map.put("returnMessage", "User Registration successful");
 		}else {
-			map.put("errorMessage", "U");
+			map.put("errorMessage", "User already exists");
 		}		
 		return "register";
 		
