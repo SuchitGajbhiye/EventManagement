@@ -302,15 +302,32 @@ public class EventServiceImp implements EventService{
 	}
 
 	@Override
-	public void registerEvents(int eventId, String noOfStudents, String userEmail) {
+	public String registerEvents(int eventId, String noOfStudents, String userEmail) {
 		String eventName = null;
 		String eventLocation = null;
 		Date eventDate = null;
 		Statement stmt = null;
+		String checkReg = "SELECT COUNT(*) COUNT FROM EVENT_REG_SUMMARY WHERE EVENTID = '"+eventId+"' AND REGISTER_BY = '"+userEmail+"'";
+		Integer count=null;
 		String eventNameQuery = "SELECT * FROM EVENTS WHERE EVENTID = '"+eventId+"'";
+		
 		try {
 			connection = new ConnectionDB().getNewConnection();
 			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(checkReg);
+			while(rs.next()) {
+				count = rs.getInt("COUNT");
+			}
+			
+		}catch(Exception e) {
+			LOG.info("Exception occures while checking user for particuler event:"+e.getMessage());
+			e.printStackTrace();
+		}
+		if(count==0) {
+			
+		
+		try {
+			
 			ResultSet rs = stmt.executeQuery(eventNameQuery);
 			while(rs.next()) {
 				eventName = rs.getString("EVENTNAME");
@@ -333,6 +350,10 @@ public class EventServiceImp implements EventService{
 			LOG.info("Exception occures while registerEvent in EventServiceImpl:"+e.getMessage());
 			e.printStackTrace();
 		}
+		return "You Have Sucessfully Registered For This Event";
+	 }else {
+		 return "You Have Already Registered For this Event";
+	 }
 		
 	}
 

@@ -44,6 +44,7 @@
 			<tr>
 				<label for="searchOptions">Choose a Search Criteria:</label>
 				<h3 style="font-size: 15px;font-weight: bold;color: green;text-align: right">${successMessage}</h3>
+				<h3 style="font-size: 15px;font-weight: bold;color: red;text-align: right">${erroMessage}</h3>
 				<th style="width:10px;"><fieldset class="form-group">
 				<select name="searchOptions" id="searchOptions">
 				  <option value="eventId">Event ID</option>
@@ -56,7 +57,8 @@
 			</fieldset></th>
 			<th><fieldset class="form-group">
 			<button  type="button" onclick="searchEvents()" class="filebutton btn large grey" style="background-color: grey;color: #fff;width: 10%;">Search</button>
-			</fieldset></th>
+			</fieldset></th>	
+					
 			</tr>
 			</thead>
 			</table>

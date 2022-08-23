@@ -14,8 +14,7 @@
 
 </head>
 <body>
-	<%-- <jsp:include page="../common/header.jsp"></jsp:include> --%>
-	<jsp:include page="menu.jsp"></jsp:include>
+	<jsp:include page="../common/header.jsp"></jsp:include>	
 	<div class="container col-md-5" style="padding-top: 15px;">
 		<div class="card">
 			<div class="card-body">
@@ -61,6 +60,7 @@
 					<button type="submit" class="btn btn-primary">Submit</button>
 					
 					<span style="color: green">${returnMessage}</span>
+					<span style="color: red">${errorMessage}</span>
 					</div>
 
 				</form>

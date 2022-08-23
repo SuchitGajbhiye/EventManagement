@@ -126,16 +126,22 @@ public class EventController {
 	
 	@RequestMapping(value = "/registerForEvent", method=RequestMethod.GET)
 	public String registerForEvent(ModelMap map,@RequestParam int eventId,@RequestParam String noOfStudents,HttpServletRequest request){
-		map.put("successMessage", "You are successfully registered for event");
+		//map.put("successMessage", "You are successfully registered for event");
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		if(userEmail==null || userEmail.isEmpty()) {
 			return "login";
 		}else {
-			eventService.registerEvents(eventId,noOfStudents,userEmail);
+			String message = eventService.registerEvents(eventId,noOfStudents,userEmail);
+			if(message.contains("Already")) {
+				map.put("erroMessage",message );
+			}else {
+				map.put("successMessage",message );
+			}
+						
 			try {
 				map.put("list", eventService.getEvents(userEmail));
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				LOG.info("Exception occures while getting list from registerEvent API:"+e.getMessage());
 				e.printStackTrace();
 			}
 			return "eventsListUser";
