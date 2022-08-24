@@ -28,19 +28,5 @@ public class ConnectionDB {
 	      return connection;
 	}*/
 	
-	public Connection getNewConnection() {
-		Connection connection = null;
-	      try {
-	         Class.forName("oracle.jdbc.driver.OracleDriver");
-	         connection = DriverManager
-	            .getConnection("jdbc:oracle:thin:@dlcqtovdb01.nonprod.avaya.com:1526/CQTDEV",
-	            "CSQT3", "schemaOWN2014#");
-	      } catch (Exception e) {
-	         e.printStackTrace();
-	         System.err.println(e.getClass().getName()+": "+e.getMessage());
-	         System.exit(0);
-	      }
-	      System.out.println("Opened database successfully");
-	      return connection;
-	}
+	
 }
