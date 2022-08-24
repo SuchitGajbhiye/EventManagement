@@ -64,6 +64,7 @@
 						<th>Event Name</th>
 						<th>Event Date</th>
 						<th>No of Students</th>
+						<th>Event Location</th>
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -76,9 +77,10 @@
 							<td><c:out value="${todo.organization}" /></td>
 							<td><c:out value="${todo.eventId}" /></td>
 							<td><c:out value="${todo.eventName}" /></td>
-							<td><c:out value="${todo.eventDate}" /></td>
+							<td style="width:20%;"><c:out value="${todo.eventDate}" /></td>
 							<td><c:out value="${todo.noOfStudents}" /></td>
-							<td>
+							<td><c:out value="${todo.eventLocation}" /></td>
+							<td style="width:20%;">
 							<button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="APPROVED" class="btn btn-success">Approve</button>
           				    <button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="REJECTED" class="btn btn-warning">Reject</button>
           				    </td>
@@ -135,7 +137,7 @@
 		}
 	function takeAction(eventId,eventName) {
 		  var action = document.getElementById("action").value
-		  window.location="takeAction?eventId="+eventId+"&eventName="+eventName+"&action="+action;
+		  window.location="/updateApproval?eventId="+eventId+"&eventName="+eventName+"&action="+action;
 		}
 	function downloadData() {
 		  window.location="downloadEventData";

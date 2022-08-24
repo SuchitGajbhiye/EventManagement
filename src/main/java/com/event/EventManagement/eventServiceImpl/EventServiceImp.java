@@ -56,7 +56,7 @@ public class EventServiceImp implements EventService{
 	public List<EventModel> getEvents(String userEmail) throws SQLException {
 		String eventRegQuery = null;
 		LOG.info("This is info level log");
-		String query = "select * from events order by eventid desc";
+		String query = "select * from events where to_date( EVENTDATE, 'YYYY-Mm-DD') >= sysdate order by eventid desc";
 		
 		
 		connection = new ConnectionDB().getNewConnection();
@@ -308,8 +308,10 @@ public class EventServiceImp implements EventService{
 		Date eventDate = null;
 		Statement stmt = null;
 		String checkReg = "SELECT COUNT(*) COUNT FROM EVENT_REG_SUMMARY WHERE EVENTID = '"+eventId+"' AND REGISTER_BY = '"+userEmail+"'";
+		String noIfStudentCountFromEvent = "SELECT COUNT(*) NO_OF_STUDENTS FROM EVENTS WHERE EVENTID = '"+eventId+"' AND NUMBER_OF_STUDENTS >= '"+noOfStudents+"'";
 		Integer count=null;
 		String eventNameQuery = "SELECT * FROM EVENTS WHERE EVENTID = '"+eventId+"'";
+		Integer noOfStudentsCount = null;
 		
 		try {
 			connection = new ConnectionDB().getNewConnection();
@@ -325,7 +327,17 @@ public class EventServiceImp implements EventService{
 		}
 		if(count==0) {
 			
-		
+		try {
+			ResultSet rs = stmt.executeQuery(noIfStudentCountFromEvent);
+			while(rs.next()) {
+				noOfStudentsCount = rs.getInt("NO_OF_STUDENTS");
+			}			
+		}catch(Exception e) {
+			LOG.info("Exception occures while fetching noof students from events:"+e.getMessage());
+			e.printStackTrace();
+		}
+		if(noOfStudentsCount!=0) {
+			
 		try {
 			
 			ResultSet rs = stmt.executeQuery(eventNameQuery);
@@ -351,6 +363,9 @@ public class EventServiceImp implements EventService{
 			e.printStackTrace();
 		}
 		return "You Have Sucessfully Registered For This Event";
+		}else {
+			return "No Of Students Entered Should Be Less Than Or Equal to Maximum Allowed Students";
+		}
 	 }else {
 		 return "You Have Already Registered For this Event";
 	 }
@@ -361,7 +376,7 @@ public class EventServiceImp implements EventService{
 	public List<EventModel> getPendingApprovalsForAdmin() {
 		String query = "SELECT REGISTER_BY,(select COMPANY  from eventusers where emailid = register_by )organization,EVENTID,"
 				+ "EVENTNAME,no_of_students,EVENTDATE,EVENTLOCATION,APPROVAL_STATUS FROM EVENT_REG_SUMMARY WHERE APPROVAL_STATUS = 'PENDING' "
-				+ "and register_by is not null";
+				+ "and register_by is not null and to_date( EVENTDATE, 'DD-Mm-YY') >= sysdate";
 		Statement stmt = null;
 		List<EventModel> list = new ArrayList<>();
 		try {
@@ -389,7 +404,7 @@ public class EventServiceImp implements EventService{
 
 	@Override
 	public List<EventModel> getPendingApprovalsForStudent(String emailId) {
-		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE REGISTER_BY = '"+emailId+"'";
+		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE REGISTER_BY = '"+emailId+"' AND to_date( EVENTDATE, 'DD-Mm-YY') >= sysdate";
 		Statement stmt = null;
 		List<EventModel> list = new ArrayList<>();
 		try {
@@ -416,7 +431,7 @@ public class EventServiceImp implements EventService{
 	@Override
 	public void updateApprovalStatus(String eventId, String eventName, String status) {
 		Statement stmt = null;
-		String query = "UPDATE EVENT_REG_SUMMARY SET STATUS = '"+status+"' WHERE EVENTID = '"+eventId+"'";
+		String query = "UPDATE EVENT_REG_SUMMARY SET APPROVAL_STATUS = '"+status+"' WHERE EVENTID = '"+eventId+"'";
 		String queryForEmail = "SELECT REGISTER_BY,EVENTLOCATION FROM  EVENT_REG_SUMMARY WHERE EVENTID = '"+eventId+"'";
 		String userEmail = null; 
 		String location = null;

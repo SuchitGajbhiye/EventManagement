@@ -47,7 +47,7 @@
 					</div>
 					<div class="form-group">
 						<label for="uname">Designation:</label> <input type="text"
-							class="form-control" id="designation" placeholder="Name of College OR Institute"
+							class="form-control" id="designation" placeholder="Designation"
 							name="designation" required>
 					</div>
 					<div class="form-group">

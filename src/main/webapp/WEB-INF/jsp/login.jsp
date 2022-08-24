@@ -38,7 +38,7 @@
 			</div>
 			<input type="radio" name="role" value="admin"/>Admin
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="role" value="student" checked/>Student
+			<input type="radio" name="role" value="student" checked/>School co-ordinator
 			</br>
 			</br>
 

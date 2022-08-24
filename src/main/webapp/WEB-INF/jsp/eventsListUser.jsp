@@ -70,7 +70,7 @@
 						<th>Event Name</th>
 						<th>Venue</th>
 						<th>Date</th>
-						<th>No of Students</th>
+						<th>Max No of Students Allowed</th>
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -83,7 +83,7 @@
 							<td><c:out value="${todo.eventName}" /></td>
 							<td><c:out value="${todo.eventLocation}" /></td>
 							<td><c:out value="${todo.eventDate}" /></td>
-							<td><c:out value="${todo.noOfStudents}" /></td>
+							<td style="text-align:center"><c:out value="${todo.noOfStudents}" /></td>
 							 <%-- <td><a href="/register?id=<c:out value='${todo.eventId}' />">Register</a>
 								&nbsp;&nbsp;&nbsp;&nbsp;</td> --%>
 							<td><button onclick="register(${todo.eventId})" class="btn btn-success">Register</button></td>

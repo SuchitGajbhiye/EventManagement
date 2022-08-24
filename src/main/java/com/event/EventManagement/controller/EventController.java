@@ -65,10 +65,10 @@ public class EventController {
 		message = eventService.createEvent(model);
 		if(message!=null && message.equalsIgnoreCase("Success")) {
 			map.put("successMessage", "Event Created Successfully");
-			request.getSession().setAttribute("successMessage","Event Created Successfully");
+			//request.getSession().setAttribute("successMessage","Event Created Successfully");
 		}else {
 			map.put("errorMesage", "Event Already Exist");
-			request.getSession().setAttribute("errorMessage","Event Already Exist");
+			//request.getSession().setAttribute("errorMessage","Event Already Exist");
 		}
 		//map.put("list", eventService.getEvents(userEmail));
 		return "createEvent";
@@ -132,7 +132,7 @@ public class EventController {
 			return "login";
 		}else {
 			String message = eventService.registerEvents(eventId,noOfStudents,userEmail);
-			if(message.contains("Already")) {
+			if(message.contains("Already") || message.contains("Maximum Allowed")) {
 				map.put("erroMessage",message );
 			}else {
 				map.put("successMessage",message );
@@ -186,19 +186,19 @@ public class EventController {
 	}
 	
 	@RequestMapping(value = "/updateApproval", method=RequestMethod.GET)
-	public String updateApproval(ModelMap map,HttpServletRequest request, String eventId,String eventName,String status){
+	public String updateApproval(ModelMap map,HttpServletRequest request, String eventId,String eventName,String action){
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		String role = (String) request.getSession().getAttribute("role");
 		if(userEmail==null || userEmail.isEmpty()) {
 			return "login";
 		}else {
-			eventService.updateApprovalStatus(eventId,eventName,status);
+			eventService.updateApprovalStatus(eventId,eventName,action);
 			return "pendingApprovalsAdmin";
 		}	
 	
 	}
 	
-	@RequestMapping(value = "/downloadEventSummaryData", method=RequestMethod.GET)
+	@RequestMapping(value = "/downloadEventData", method=RequestMethod.GET)
 	public String downlaodEventData(ModelMap map,HttpServletRequest request, HttpServletResponse response){
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
 		String role = (String) request.getSession().getAttribute("role");
