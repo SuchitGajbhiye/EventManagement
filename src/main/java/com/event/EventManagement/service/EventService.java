@@ -36,4 +36,6 @@ public interface EventService {
 
 	void downloadEventPendingData(HttpServletRequest request, HttpServletResponse response);
 
+	public String updateEvent(EventModel model, int id);
+
 }

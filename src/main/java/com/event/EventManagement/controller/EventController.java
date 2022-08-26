@@ -60,24 +60,34 @@ public class EventController {
 
 	@RequestMapping(value = "/createEvent", method=RequestMethod.POST)
 	public String createNewEvent(ModelMap map,EventModel model,HttpServletRequest request){
-		String message = null;
+		String message = null;		
 		String userEmail = (String) request.getSession().getAttribute("userEmail");
+		int id = (int) request.getSession().getAttribute("eventId");
+		if(id==0)
 		message = eventService.createEvent(model);
+		else
+			message = eventService.updateEvent(model,id);
 		if(message!=null && message.equalsIgnoreCase("Success")) {
 			map.put("successMessage", "Event Created Successfully");
-			//request.getSession().setAttribute("successMessage","Event Created Successfully");
-		}else {
+			request.getSession().setAttribute("successMessageEvent","Event Created Successfully");
+		}		
+		else if(message!=null && message.equalsIgnoreCase("Update Success")) {
+			map.put("successMessage", "Event updated Successfully");
+		}
+		else {
 			map.put("errorMesage", "Event Already Exist");
-			//request.getSession().setAttribute("errorMessage","Event Already Exist");
+			request.getSession().setAttribute("errorMessageEvent","Event Already Exist");
 		}
 		//map.put("list", eventService.getEvents(userEmail));
+		request.getSession().setAttribute("eventId", 0);
 		return "createEvent";
 	}
 	@RequestMapping(value = "/new", method=RequestMethod.GET)
 	public String showNewForm(ModelMap map,HttpServletRequest request){
 		String value  = (String) request.getSession().getAttribute("user");
-		request.getSession().setAttribute("erroMessage", null);
-		request.getSession().setAttribute("successMessage", null);
+		request.getSession().setAttribute("erroMessageEvent", null);
+		request.getSession().setAttribute("successMessageEvent", null);
+		request.getSession().setAttribute("eventId", 0);
 		if(value!=null){
 		return "createEvent";
 		}else{
@@ -103,11 +113,12 @@ public class EventController {
 		dispatcher.forward(request, response);
 	}*/
 	@RequestMapping(value = "/edit", method=RequestMethod.GET)
-	public String updateEvent(ModelMap map,@RequestParam int id){
+	public String updateEvent(ModelMap map,@RequestParam int id, HttpServletRequest request){
 		LOG.info("event id to be Edited "+id);
 		EventModel model = eventService.getEventBasedOnId(id);
+		request.getSession().setAttribute("eventId", id);
 		map.put("eventDetails", model);//retrive the records for this id and pass it in the model using "eventDetails" name		
-		map.put("successMessage", "Event Updated Successfully");
+		//map.put("successMessage", "Event Updated Successfully");
 		return "createEvent";
 	}
 	@RequestMapping(value = "/delete", method=RequestMethod.GET)
@@ -193,6 +204,8 @@ public class EventController {
 			return "login";
 		}else {
 			eventService.updateApprovalStatus(eventId,eventName,action);
+			List<EventModel> list =	eventService.getPendingApprovalsForAdmin();
+			map.put("pendingApprovalsAdmin", list);
 			return "pendingApprovalsAdmin";
 		}	
 	

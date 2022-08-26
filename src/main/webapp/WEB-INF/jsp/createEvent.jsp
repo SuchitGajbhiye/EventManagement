@@ -53,14 +53,14 @@ if(name!=null){
 				</fieldset>
 				
 				<fieldset class="form-group">
-					<label>No of Max Students allowed</label> <input type="text" pattern="\d*" maxlength="3" class="form-control"
+					<label>No of Max Students allowed</label> <input type="text" pattern="\d*" maxlength="4" class="form-control"
 						name="noOfStudents" required="required" value="<c:out value='${eventDetails.noOfStudents}'/>">
 				</fieldset>
-				<%if(request.getSession().getAttribute("successMessage")!=null){%>
+				<%if(request.getSession().getAttribute("successMessageEvent")!=null){%>
 				<div class="alert alert-success center" role="alert">
 				<p>${successMessage}</p>
 				</div>
-				<%}if(request.getSession().getAttribute("errorMessage")!=null){%>
+				<%}if(request.getSession().getAttribute("errorMessageEvent")!=null){%>
 				<div class="alert alert-success center" role="alert">
 				<p>${errorMessage}</p>
 				</div>

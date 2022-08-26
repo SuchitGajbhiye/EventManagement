@@ -230,11 +230,10 @@ public class EventServiceImp implements EventService{
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {				
-				model.setEventDate(rs.getString(query));
-				model.setEventLocation(query);
-				model.setEventName(query);
-				model.setNoOfStudents(query);
-				model.setEventdescription(query);				
+				model.setEventDate(rs.getString("EVENTDATE"));
+				model.setEventLocation(rs.getString("EVENTLOCATION"));
+				model.setEventName(rs.getString("EVENTNAME"));
+				model.setNoOfStudents(rs.getString("NUMBER_OF_STUDENTS"));							
 			}
 			stmt.close();
 			connection.close();
@@ -248,7 +247,7 @@ public class EventServiceImp implements EventService{
 	@Override
 	public void deleteEvent(int id) {
 		connection = new ConnectionDB().getNewConnection();
-		String query = "DELETE * FROM EVENTS WHERE EVENTID = '"+id+"'";
+		String query = "DELETE FROM EVENTS WHERE EVENTID = '"+id+"'";
 		Statement stmt = null;
 		try {
 			stmt = connection.createStatement();
@@ -447,9 +446,8 @@ public class EventServiceImp implements EventService{
 			}
 			stmt.close();
 			connection.close();	
-			//Mail sent code			
-			//sendEmail(eventId,status);
-			sendEmailtoUser(status,userEmail,location);
+			//Mail sent code				
+			//sendEmailtoUser(status,userEmail,location);
 			
 		}catch(Exception e) {
 			LOG.info("Exception occures while updating approval status"+e.getMessage());
@@ -501,7 +499,166 @@ public class EventServiceImp implements EventService{
 	
 	@Override
 	public void downloadEventData(HttpServletRequest request,HttpServletResponse response) {
-		String query = "SELECT * FROM EVENT_REG_SUMMARY";
+		String query = "SELECT * FROM EVENTS where to_date( EVENTDATE, 'YYYY-Mm-DD') >= sysdate";
+		Statement stmt = null;
+		List<EventModel> list = new ArrayList<>();
+		try {
+			connection = new ConnectionDB().getNewConnection();
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				EventModel eventObj = new EventModel();
+				eventObj.setEventId(rs.getInt("EVENTID"));
+				eventObj.setEventName(rs.getString("EVENTNAME"));
+				/* eventObj.setEmailId(rs.getString("REGISTER_BY")); */
+				eventObj.setEventDate(rs.getString("EVENTDATE"));
+				eventObj.setNoOfStudents(rs.getString("NUMBER_OF_STUDENTS"));
+				/* eventObj.setApprovalStatus(rs.getString("APPROVAL_STATUS")); */
+				eventObj.setEventLocation(rs.getString("EVENTLOCATION"));
+				list.add(eventObj);
+			}
+			
+			downloadEventList(list,request,response);
+		}catch(Exception e) {
+			LOG.info("Exception occures while downloading excel file"+e.getMessage());
+			e.printStackTrace();
+		}		
+		
+	}
+
+	private void downloadEventList(List<EventModel> list,HttpServletRequest request,HttpServletResponse response) {
+
+
+		//logger.info("Entering method : writeUploadedLogtoExcel");
+		String fileName = "EVENTLIST" + ".xlsx";
+		try {
+			//deleteTempFile(fileName);
+			SXSSFWorkbook wb = new SXSSFWorkbook(100);	
+			Font headerFont = wb.createFont();
+			headerFont.setFontHeightInPoints((short) 12);
+			headerFont.setColor(IndexedColors.WHITE.getIndex());
+			((XSSFFont) headerFont).setBold(true);
+	
+			Font datacellFont = wb.createFont();
+			datacellFont.setFontHeightInPoints((short) 10);
+			datacellFont.setColor(IndexedColors.BLACK.getIndex());
+	
+			CellStyle headerCellStyle = wb.createCellStyle();
+			headerCellStyle = wb.createCellStyle();
+			headerCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			headerCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			HSSFWorkbook hwb = new HSSFWorkbook();
+			HSSFPalette palette = hwb.getCustomPalette();
+			HSSFColor headerColor = palette.findSimilarColor(113, 112, 116);
+			headerCellStyle.setFillForegroundColor(headerColor.getIndex());
+			headerCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			headerCellStyle.setFont(headerFont);
+	
+			Sheet sh = wb.createSheet();
+			Row headerRow = sh.createRow(0); // For Titles
+			headerRow.setHeightInPoints(20);
+			Cell headerCell = null;
+	
+			int index = 0;
+			String[] headerCols = { "EVENT ID", "EVENT NAME","EVENT DATE","NO_OF_STUDENTS",
+					"EVENT LOCATION"};
+	
+			if (headerCols != null && headerCols.length > 0) {
+				for (String headerTitle : headerCols) {
+					headerCell = headerRow.createCell(index);
+					headerCell.setCellValue(headerTitle); // Header Title - Set a
+					// string value for the
+					// cell.
+					headerCell.setCellStyle(headerCellStyle); // Header style - Set
+					// the style for the
+					// cell
+					sh.autoSizeColumn(index); // Adjusts the column width to fit the
+					// contents.
+					index = index + 1;
+				}
+			}
+			CellStyle dataCellStyle = wb.createCellStyle();
+			dataCellStyle = wb.createCellStyle();
+			dataCellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+			dataCellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+			dataCellStyle.setBorderRight(CellStyle.BORDER_THIN);
+			dataCellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			dataCellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderTop(CellStyle.BORDER_THIN);
+			dataCellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			dataCellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+			dataCellStyle.setWrapText(true);
+			dataCellStyle.setFont(datacellFont);
+	
+			int rownum = 1;
+			for (EventModel model : list) {
+				
+				Row row = sh.createRow(rownum);
+	
+				// Set the Log ID value at position 0
+				Cell cellA0 = row.createCell(0);
+				cellA0.setCellValue(model.getEventId() );
+				cellA0.setCellStyle(dataCellStyle);
+	
+				// Set the Contract Number value at position 1
+				Cell cellA1 = row.createCell(1);
+				cellA1.setCellValue(model.getEventName());
+				cellA1.setCellStyle(dataCellStyle);
+	
+				// Set the Opportunity Number value at position 2
+				Cell cellA2 = row.createCell(2);
+				cellA2.setCellValue(model.getEventDate());
+				cellA2.setCellStyle(dataCellStyle);
+				
+				Cell cellA3 = row.createCell(3);
+				cellA3.setCellValue(model.getNoOfStudents());
+				cellA3.setCellStyle(dataCellStyle);
+				
+				Cell cellA4 = row.createCell(4);
+				cellA4.setCellValue(model.getEventLocation());
+				cellA4.setCellStyle(dataCellStyle);
+				
+				/*
+				 * Cell cellA5 = row.createCell(5);
+				 * cellA5.setCellValue(model.getApprovalStatus());
+				 * cellA5.setCellStyle(dataCellStyle);
+				 * 
+				 * Cell cellA6 = row.createCell(6);
+				 * cellA6.setCellValue(model.getEventLocation());
+				 * cellA6.setCellStyle(dataCellStyle);
+				 */
+				
+				
+				rownum++;
+			}
+	
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.addHeader("content-disposition", "attachment; filename=" + fileName);
+			Cookie fileDownloadCookie = new Cookie("fileDownload", "done");
+			fileDownloadCookie.setMaxAge(1000 * 60 * 60);
+			fileDownloadCookie.setPath("/");
+			response.addCookie(fileDownloadCookie);
+			ServletOutputStream out = response.getOutputStream();
+			wb.write(out);
+			wb.dispose();
+			//deleteTempFile(fileName);
+			out.close();
+			//logger.info("Exiting method : writeOpportunitiestoExcel");
+		} catch(IOException ie) {
+			ie.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+		}
+		
+	
+	}	
+	
+	@Override
+	public void downloadEventPendingData(HttpServletRequest request,HttpServletResponse response) {
+		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE APPROVAL_STATUS = 'PENDING' and to_date( EVENTDATE, 'DD-Mm-YY') >= sysdate";
 		Statement stmt = null;
 		List<EventModel> list = new ArrayList<>();
 		try {
@@ -520,15 +677,15 @@ public class EventServiceImp implements EventService{
 				list.add(eventObj);
 			}
 			
-			downloadEventList(list,request,response);
+			downloadEventListForPendingApproval(list,request,response);
 		}catch(Exception e) {
 			LOG.info("Exception occures while downloading excel file"+e.getMessage());
 			e.printStackTrace();
 		}		
 		
 	}
-
-	private void downloadEventList(List<EventModel> list,HttpServletRequest request,HttpServletResponse response) {
+	
+	private void downloadEventListForPendingApproval(List<EventModel> list,HttpServletRequest request,HttpServletResponse response) {
 
 
 		//logger.info("Entering method : writeUploadedLogtoExcel");
@@ -654,35 +811,26 @@ public class EventServiceImp implements EventService{
 		}
 		
 	
-	}	
+	}
 	
+	
+
 	@Override
-	public void downloadEventPendingData(HttpServletRequest request,HttpServletResponse response) {
-		String query = "SELECT * FROM EVENT_REG_SUMMARY WHERE STATUS = 'PENDING'";
+	public String updateEvent(EventModel model, int id) {
 		Statement stmt = null;
-		List<EventModel> list = new ArrayList<>();
+		String query = "UPDATE EVENTS SET EVENTNAME = '"+model.getEventName()+"',EVENTLOCATION = '"+model.getEventLocation()+"',EVENTDATE = '"+model.getEventDate()+"',"
+				+ "NUMBER_OF_STUDENTS = '"+model.getNoOfStudents()+"' WHERE EVENTID = '"+id+"'" ;
+		connection = new ConnectionDB().getNewConnection();
 		try {
-			connection = new ConnectionDB().getNewConnection();
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			while(rs.next()) {
-				EventModel eventObj = new EventModel();
-				eventObj.setEventId(rs.getInt("EVENTID"));
-				eventObj.setEventName(rs.getString("EVENTNAME"));
-				eventObj.setEmailId(rs.getString("REGISTER_BY"));
-				eventObj.setEventDate(rs.getString("EVENTDATE"));
-				eventObj.setNoOfStudents(rs.getString("NO_OF_STUDENTS"));
-				eventObj.setApprovalStatus(rs.getString("APPROVAL_STATUS"));
-				eventObj.setEventLocation(rs.getString("EVENTLOCATION"));
-				list.add(eventObj);
-			}
-			
-			downloadEventList(list,request,response);
-		}catch(Exception e) {
-			LOG.info("Exception occures while downloading excel file"+e.getMessage());
-			e.printStackTrace();
+			stmt.close();
+			connection.close();
+		}catch(Exception e){
+		LOG.info("Exception occures while updating event:"+e.getMessage());	
+		e.printStackTrace();
 		}		
-		
+		return "Update Success";
 	}	
 	
 	

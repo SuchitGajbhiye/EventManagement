@@ -52,7 +52,7 @@
 		<!-- <img src="/jsp/eventPlanning.jpg" alt="View" style="width:304px;height:228px;"> -->
 		<!--  <img src="eventPlanning.jpg" class="img-fluid" border=0 width="100px" height="100px"> -->
 			<h3 class="text-center">List of Pending Approvals</h3>
-			<button onclick="downloadData();" class="btnDownload" style="float: right;"><i class="fa fa-download"></i> Download</button>
+			<button onclick="downloadData();" class="btnDownload" style="float: right;"><i class="fa fa-download"></i> Download</button> 
 			</br></br>
 			<table class="table table-striped">
 				<thead>
@@ -81,8 +81,8 @@
 							<td><c:out value="${todo.noOfStudents}" /></td>
 							<td><c:out value="${todo.eventLocation}" /></td>
 							<td style="width:20%;">
-							<button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="APPROVED" class="btn btn-success">Approve</button>
-          				    <button onclick="takeAction('${todo.eventId}','${todo.eventName}');" id="action" value="REJECTED" class="btn btn-warning">Reject</button>
+							<button onclick="takeAction('${todo.eventId}','${todo.eventName}','APPROVED');" id="action" value="APPROVED" class="btn btn-success">Approve</button>
+          				    <button onclick="takeAction('${todo.eventId}','${todo.eventName}','REJECTED');" id="action" value="REJECTED" class="btn btn-warning">Reject</button>
           				    </td>
 						</tr>
 					</c:forEach>
@@ -135,12 +135,12 @@
 		 
 		  window.location="searchEvents?searchText="+searchText+"&searchParameter="+searchParameter;
 		}
-	function takeAction(eventId,eventName) {
-		  var action = document.getElementById("action").value
+	function takeAction(eventId,eventName,action) {
+		
 		  window.location="/updateApproval?eventId="+eventId+"&eventName="+eventName+"&action="+action;
 		}
 	function downloadData() {
-		  window.location="downloadEventData";
+		  window.location="downloadPendingApprovalData";
 		}
 	
 	</script>

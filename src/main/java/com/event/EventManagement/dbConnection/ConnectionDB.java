@@ -28,5 +28,18 @@ public class ConnectionDB {
 	      return connection;
 	}*/
 	
-	
+	public Connection getNewConnection() {
+		Connection connection = null;
+	      try {
+	         Class.forName("oracle.jdbc.driver.OracleDriver");
+	         connection = DriverManager
+	            .getConnection("Connection details",
+	            "username", "password");
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	         System.err.println(e.getClass().getName()+": "+e.getMessage());	        
+	      }
+	      System.out.println("Opened database successfully");
+	      return connection;
+	}
 }
